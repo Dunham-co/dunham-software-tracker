@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUNHAM+CO · Tech Stack</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --gold:#9C7D4E;--gold2:#B89A60;--gold3:#7A6040;
+  --cream:#F5F0E8;--cream2:#EDE6D8;--cream3:#E2D9C8;
+  --warm:#FAF7F2;
+  --sidebar:#1C1812;--sborder:rgba(156,125,78,0.25);--stext:#C8B898;--smuted:#7A6A50;
+  --bg:#F0EAE0;--card:#FFFFFF;--cborder:#E4DAC8;
+  --td:#1A1410;--tb:#3A3028;--tm:#8A7A68;--tl:#B0A090;
+  --green:#2E7D52;--gbg:#EBF5EF;
+  --red:#C0392B;--rbg:#FDECEA;
+  --amber:#B8610A;--abg:#FEF3E7;
+  --blue:#2563A8;--bbg:#EBF2FB;
+  --border:#E0D8C8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-size:14px;display:flex;min-height:100vh;}
+
+/* ============ PASSWORD GATE ============ */
+#pw-gate{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#181410 0%,#231D14 50%,#1A1510 100%);
+  flex-direction:column;
+  animation:gateFade .3s ease;
+}
+@keyframes gateFade{from{opacity:0;}to{opacity:1;}}
+#pw-gate.unlocked{animation:gateOut .4s ease forwards;}
+@keyframes gateOut{to{opacity:0;pointer-events:none;}}
+.pw-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:500;letter-spacing:.14em;
+  color:#B89A60;margin-bottom:6px;
+}
+.pw-sub{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(156,125,78,0.5);margin-bottom:40px;
+}
+.pw-box{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(156,125,78,0.22);
+  border-radius:14px;
+  padding:36px 40px;
+  width:100%;max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  text-align:center;
+}
+.pw-box h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:#E8E0D4;font-weight:500;
+  letter-spacing:.04em;margin-bottom:6px;
+}
+.pw-box p{font-size:12px;color:rgba(200,184,152,0.5);margin-bottom:24px;}
+.pw-input{
+  width:100%;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(156,125,78,0.3);border-radius:8px;
+  padding:12px 16px;font-family:'DM Sans',sans-serif;
+  font-size:15px;color:#E8E0D4;outline:none;
+  letter-spacing:.12em;text-align:center;
+  transition:border-color .2s;
+  -webkit-text-security:disc;
+}
+.pw-input:focus{border-color:#B89A60;}
+.pw-input.shake{animation:shake .35s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-8px);}40%,80%{transform:translateX(8px);}}
+.pw-btn{
+  width:100%;margin-top:14px;
+  background:linear-gradient(135deg,#9C7D4E,#B89A60);
+  color:#fff;border:none;border-radius:8px;
+  padding:13px;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:.06em;
+  cursor:pointer;transition:opacity .2s;
+}
+.pw-btn:hover{opacity:.88;}
+.pw-error{
+  font-size:11px;color:#CF8E82;margin-top:10px;
+  height:16px;transition:opacity .2s;
+}
+.pw-lock{font-size:36px;margin-bottom:18px;opacity:.7;}
+.pw-footer{margin-top:32px;font-size:10px;color:rgba(156,125,78,0.3);letter-spacing:.08em;}
+
+
+
+/* SIDEBAR */
+.sb{width:220px;min-width:220px;background:var(--sidebar);border-right:1px solid var(--sborder);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+.sb-logo{padding:22px 20px 18px;border-bottom:1px solid var(--sborder);}
+.sb-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:.1em;color:var(--gold2);}
+.sb-sub{font-size:10px;color:var(--smuted);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
+.sb-incor{background:rgba(156,125,78,.12);border:1px solid var(--sborder);border-radius:8px;padding:12px 14px;margin:12px 14px;}
+.sb-incor .lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--smuted);margin-bottom:4px;}
+.sb-incor .val{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold2);font-weight:600;}
+.sb-incor .sub{font-size:10px;color:var(--smuted);margin-top:2px;}
+.sb-sec{padding:16px 16px 4px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--smuted);font-weight:600;}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--stext);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.ni:hover{background:rgba(156,125,78,.08);color:var(--gold2);}
+.ni.active{background:rgba(156,125,78,.14);color:var(--gold2);border-left-color:var(--gold2);font-weight:500;}
+.ni .ico{font-size:14px;width:18px;text-align:center;}
+.sb-foot{margin-top:auto;padding:14px 20px;border-top:1px solid var(--sborder);font-size:10px;color:var(--smuted);}
+
+/* MAIN */
+.mw{margin-left:220px;flex:1;min-width:0;}
+.topbar{background:var(--warm);border-bottom:1px solid var(--border);padding:0 32px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--td);letter-spacing:.04em;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.tb-meta{font-size:12px;color:var(--tm);}
+.add-btn{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:background .15s;}
+.add-btn:hover{background:var(--gold3);}
+.content{padding:26px 30px;max-width:1400px;}
+
+/* SECTIONS */
+.sec{display:none;}.sec.active{display:block;}
+
+/* C-SUITE HERO BANNER */
+.csuite-banner{
+  border-radius:18px;
+  padding:0;
+  margin-bottom:26px;
+  display:flex;
+  gap:0;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 6px 32px rgba(46,125,82,0.10), 0 2px 8px rgba(156,125,78,0.08);
+}
+/* animated shimmer bar across top */
+.csuite-banner::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:5px;
+  background:linear-gradient(90deg,var(--green),#52c47a,var(--gold2),var(--amber),var(--gold2),var(--green));
+  background-size:300% 100%;
+  animation:shimmerBar 4s linear infinite;
+  z-index:2;
+}
+@keyframes shimmerBar{0%{background-position:0% 0}100%{background-position:300% 0}}
+
+/* LEFT — Amortize (green tones) */
+.cb-left{
+  flex:1;
+  padding:32px 36px 28px;
+  border-right:1px solid rgba(46,125,82,0.15);
+  position:relative;
+  background:linear-gradient(145deg,#F3FBF6 0%,#E6F5EC 60%,#EEF9F2 100%);
+  overflow:hidden;
+}
+.cb-left::after{
+  content:'';
+  position:absolute;
+  right:-30px;bottom:-30px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(46,125,82,0.13) 0%,transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+  animation:pulse 3s ease-in-out infinite;
+}
+.cb-left::before{
+  content:'';
+  position:absolute;
+  left:-20px;top:20px;
+  width:100px;height:100px;
+  background:radial-gradient(circle,rgba(82,196,122,0.07) 0%,transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+}
+
+/* RIGHT — INCOR (gold/amber tones) */
+.cb-right{
+  flex:1;
+  padding:32px 36px 28px;
+  position:relative;
+  background:linear-gradient(145deg,#FFFDF5 0%,#FDF5E0 60%,#FDF8EA 100%);
+  overflow:hidden;
+}
+.cb-right::after{
+  content:'';
+  position:absolute;
+  right:-30px;bottom:-30px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(156,125,78,0.12) 0%,transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+  animation:pulse 3s ease-in-out infinite 1.5s;
+}
+.cb-right::before{
+  content:'';
+  position:absolute;
+  left:-20px;top:20px;
+  width:100px;height:100px;
+  background:radial-gradient(circle,rgba(184,154,96,0.08) 0%,transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+}
+
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.08);opacity:0.7;}}
+
+.cb-label{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.cb-left .cb-label{color:var(--green);}
+.cb-right .cb-label{color:var(--gold3);}
+.cb-icon{font-size:18px;line-height:1;}
+.cb-value{
+  font-family:'Cormorant Garamond',serif;
+  font-size:62px;font-weight:600;line-height:1;
+  margin-bottom:12px;
+  letter-spacing:-0.02em;
+  animation:slideUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.cb-value.invest{color:var(--green);}
+.cb-value.incor{color:var(--gold);}
+.cb-desc{font-size:12px;color:var(--tm);line-height:1.6;}
+.cb-sub{font-size:11px;color:var(--tl);margin-top:6px;line-height:1.5;}
+.cb-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;
+  letter-spacing:.04em;margin-top:14px;
+  animation:fadeIn 1s ease 0.4s both;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.chip-green{background:var(--gbg);color:var(--green);border:1px solid rgba(46,125,82,0.25);}
+.chip-gold{background:#FBF5E8;color:var(--gold3);border:1px solid rgba(156,125,78,0.3);}
+
+
+
+/* KPI CARDS */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:22px;}
+.kc{background:var(--card);border:1px solid var(--cborder);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+.kc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 12px 12px;}
+.kc.cg::after{background:linear-gradient(90deg,var(--gold3),var(--gold2));}
+.kc.cgg::after{background:var(--green);}
+.kc.ca::after{background:var(--amber);}
+.kc.cr::after{background:var(--red);}
+.kc.cb::after{background:var(--blue);}
+.kl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tm);font-weight:600;margin-bottom:7px;}
+.kv{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--td);line-height:1;}
+.kv.gc{color:var(--gold);}
+.kv.gg{color:var(--green);}
+.kv.ga{color:var(--amber);}
+.ks{font-size:11px;color:var(--tm);margin-top:5px;line-height:1.4;}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--cborder);border-radius:12px;padding:20px 22px;margin-bottom:18px;}
+.ct{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--td);margin-bottom:2px;}
+.cs{font-size:11px;color:var(--tm);margin-bottom:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+.ga{display:grid;grid-template-columns:3fr 2fr;gap:18px;}
+
+/* CHARTS */
+.ch200{position:relative;height:200px;}
+.ch280{position:relative;height:280px;}
+.ch320{position:relative;height:320px;}
+
+/* TOP 15 */
+.tl-row{display:grid;grid-template-columns:28px 1fr 90px 80px;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:4px;transition:background .12s;}
+.tl-row:last-child{border-bottom:none;}
+.tl-row:hover{background:var(--cream);}
+.tl-rk{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--tl);text-align:center;}
+.tl-nm{font-size:13px;font-weight:500;color:var(--td);}
+.tl-dp{font-size:11px;color:var(--tm);margin-top:1px;}
+.tl-bw{height:5px;background:var(--cream3);border-radius:3px;}
+.tl-bf{height:100%;background:linear-gradient(90deg,var(--gold3),var(--gold2));border-radius:3px;}
+.tl-amt{font-size:13px;font-weight:600;color:var(--gold);text-align:right;}
+
+/* PILLS */
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+.pa{background:var(--gbg);color:var(--green);}
+.pr{background:var(--abg);color:var(--amber);}
+.pc{background:var(--rbg);color:var(--red);}
+
+/* TOOL CARDS */
+.tbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.si{flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 13px;color:var(--td);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+.si:focus{border-color:var(--gold);}
+.si::placeholder{color:var(--tl);}
+.fs{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 13px;color:var(--td);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;min-width:130px;}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
+.tc{background:var(--card);border:1px solid var(--cborder);border-radius:10px;overflow:hidden;transition:box-shadow .15s,border-color .15s;}
+.tc:hover{border-color:var(--gold2);box-shadow:0 2px 12px rgba(156,125,78,.12);}
+.tc-head{padding:13px 15px 10px;border-bottom:1px solid var(--border);background:var(--cream);}
+.tc-head-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.tc-nm{font-size:13px;font-weight:600;color:var(--td);line-height:1.3;cursor:pointer;}
+.tc-def{font-size:11px;color:var(--tm);margin-top:4px;line-height:1.4;}
+.tc-body{padding:11px 15px;}
+.tc-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;gap:8px;}
+.tc-row:last-child{margin-bottom:0;}
+.tc-lb{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--tm);flex-shrink:0;}
+.tc-vl{font-size:12px;color:var(--td);font-weight:500;text-align:right;}
+.tc-vl.gv{color:var(--gold);font-size:15px;font-weight:600;}
+.tc-foot{padding:8px 15px 11px;display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;}
+.tc-dept{font-size:10px;background:var(--cream3);color:var(--tm);padding:3px 9px;border-radius:20px;}
+.tc-actions{display:flex;gap:6px;align-items:center;}
+
+/* ACTION BUTTONS ON CARDS */
+.btn-edit{background:var(--cream3);color:var(--gold);border:1px solid var(--cborder);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
+.btn-edit:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
+.btn-cancel-tool{background:var(--rbg);color:var(--red);border:1px solid #F5C6C0;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
+.btn-cancel-tool:hover{background:var(--red);color:#fff;}
+.btn-keep-tool{background:var(--gbg);color:var(--green);border:1px solid #B8DECA;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
+.btn-keep-tool:hover{background:var(--green);color:#fff;}
+.box-link-btn{background:var(--bbg);color:var(--blue);border:1px solid #C5D9F5;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none;letter-spacing:.04em;}
+.box-link-btn:hover{background:var(--blue);color:#fff;}
+
+/* BUCKET / RENEWAL */
+.bkt{background:var(--card);border:1px solid var(--cborder);border-radius:10px;overflow:hidden;margin-bottom:13px;}
+.bh{padding:12px 17px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.bh.ov{background:#FFF0EE;border-bottom:1px solid #FBCAC5;}
+.bh.d3{background:#FEF7EE;border-bottom:1px solid #FCDDB8;}
+.bh.d6{background:#FFFBE6;border-bottom:1px solid #F5DFA0;}
+.bh.d9{background:#EEF4FD;border-bottom:1px solid #C5D9F5;}
+.bh.d18{background:#EEF9F3;border-bottom:1px solid #B8DECA;}
+.bh.rv{background:#FBF5E8;border-bottom:1px solid #E8D9BB;}
+.bl{font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--td);}
+.bm{font-size:11px;color:var(--tm);display:flex;align-items:center;gap:10px;}
+.bt{font-size:14px;color:var(--tm);transition:transform .2s;}
+.bt.open{transform:rotate(180deg);}
+.bb{display:none;}.bb.open{display:block;}
+.br{display:grid;grid-template-columns:1fr 120px 110px 85px;gap:10px;align-items:center;padding:10px 17px;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;transition:background .1s;}
+.br:last-child{border-bottom:none;}
+.br:hover{background:var(--cream);}
+.bn{font-weight:500;color:var(--td);}
+.bd{font-size:11px;color:var(--tm);margin-top:1px;}
+.bdt{color:var(--tm);}
+.bc{color:var(--gold);font-weight:600;text-align:right;}
+.dt{font-size:10px;padding:3px 8px;border-radius:12px;text-align:right;font-weight:600;}
+.tov{background:var(--rbg);color:var(--red);}
+.t30{background:var(--abg);color:var(--amber);}
+.t60{background:#FFFBE6;color:#956800;}
+.t90{background:var(--bbg);color:var(--blue);}
+.t18{background:var(--gbg);color:var(--green);}
+.trv{background:#FBF5E8;color:var(--gold);}
+
+/* DEPT */
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:13px;}
+.dc{background:var(--card);border:1px solid var(--cborder);border-radius:10px;padding:17px 19px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.dc:hover{border-color:var(--gold2);box-shadow:0 2px 10px rgba(156,125,78,.1);}
+.dn{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--td);margin-bottom:2px;}
+.dct{font-size:11px;color:var(--tm);margin-bottom:11px;}
+.da{font-size:22px;font-weight:600;color:var(--gold);margin-bottom:7px;}
+.dbg{height:4px;background:var(--cream3);border-radius:2px;margin-bottom:9px;}
+.dbf{height:100%;background:linear-gradient(90deg,var(--gold3),var(--gold2));border-radius:2px;}
+.dp{font-size:11px;color:var(--tm);line-height:1.5;}
+
+/* REVIEW TABLE */
+.rt{width:100%;border-collapse:collapse;font-size:13px;}
+.rt th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tm);font-weight:600;padding:8px 10px;border-bottom:2px solid var(--border);}
+.rt td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.rt tr:last-child td{border-bottom:none;}
+.rt tr:hover td{background:var(--cream);}
+.review-actions{display:flex;gap:6px;white-space:nowrap;}
+
+/* SAVINGS TABLE */
+.st{width:100%;border-collapse:collapse;font-size:13px;}
+.st th{text-align:left;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--tm);font-weight:600;padding:8px 10px;border-bottom:2px solid var(--border);}
+.st td{padding:10px 10px;border-bottom:1px solid var(--border);}
+.st tr:last-child td{border-bottom:none;}
+.sn{text-align:right;font-weight:600;color:var(--green);}
+.stot td{font-weight:700;color:var(--td);font-size:14px;border-top:2px solid var(--border)!important;}
+
+/* CFO NOTE */
+.cfon{background:#FBF5E8;border:1px solid #E8D9BB;border-left:3px solid var(--gold);border-radius:8px;padding:13px 17px;margin-bottom:20px;font-size:12px;color:var(--tb);line-height:1.6;}
+.cfon strong{color:var(--gold);}
+
+/* RENEW MINI */
+.rm-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.rm-row:last-child{border-bottom:none;}
+
+.empty{text-align:center;padding:36px;color:var(--tm);font-size:13px;}
+
+/* ============ BIG MODAL (view/edit) ============ */
+.mo{position:fixed;inset:0;background:rgba(30,25,18,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.mo.open{display:flex;}
+.md{background:var(--warm);border:1px solid var(--cborder);border-radius:16px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;animation:mIn .18s ease;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(6px);}to{opacity:1;transform:scale(1);}}
+.mhd{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--cream);border-radius:16px 16px 0 0;}
+.mt{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--td);line-height:1.2;}
+.mhd-right{display:flex;align-items:center;gap:8px;}
+.mcl{background:none;border:1px solid var(--border);color:var(--tm);width:30px;height:30px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.mcl:hover{border-color:var(--gold);color:var(--gold);}
+.medit-btn{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
+.medit-btn:hover{background:var(--gold3);}
+.mb{padding:20px 24px;}
+.mdf{font-size:13px;color:var(--tm);line-height:1.6;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.ms{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:9px;margin-top:16px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:4px;}
+.mf .ml{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--tm);margin-bottom:2px;}
+.mf .mv{font-size:13px;color:var(--td);line-height:1.4;}
+.mf .mv.gv{color:var(--gold);font-size:17px;font-weight:600;}
+.mn{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--tb);line-height:1.5;margin-top:5px;}
+.mn.wn{background:var(--rbg);border-color:#F5C6C0;color:#8B2E25;}
+.mn.ai{background:var(--bbg);border-color:#C0D5F0;color:var(--blue);}
+.mn.box-link{background:var(--bbg);border-color:#C5D9F5;}
+.box-link-text{color:var(--blue);text-decoration:none;word-break:break-all;}
+.box-link-text:hover{text-decoration:underline;}
+
+/* ============ EDIT FORM INSIDE MODAL ============ */
+.eform{display:none;}
+.eform.open{display:block;}
+.vview{display:block;}
+.vview.hidden{display:none;}
+.ef-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.ef-full{grid-column:1/-1;}
+.ef-group label{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--tm);display:block;margin-bottom:4px;font-weight:600;}
+.ef-group input,.ef-group select,.ef-group textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--td);outline:none;transition:border-color .15s;}
+.ef-group input:focus,.ef-group select:focus,.ef-group textarea:focus{border-color:var(--gold);}
+.ef-group textarea{resize:vertical;min-height:70px;}
+.ef-save{background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:4px;}
+.ef-save:hover{background:#1f5c3a;}
+.ef-cancel{background:var(--cream3);color:var(--tm);border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:4px;margin-left:8px;}
+.ef-cancel:hover{background:var(--cream2);}
+.ef-actions{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+
+/* DATE DUAL — text field + calendar icon together */
+.date-dual{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;background:var(--card);transition:border-color .15s;}
+.date-dual:focus-within{border-color:var(--gold);}
+.date-dual input[type="text"]{flex:1;border:none;outline:none;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--td);background:transparent;min-width:0;}
+.date-dual input[type="date"]{border:none;border-left:1px solid var(--border);outline:none;padding:6px 8px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--td);background:var(--cream);cursor:pointer;width:44px;min-width:44px;opacity:.65;transition:opacity .15s,background .15s;}
+.date-dual input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;font-size:15px;opacity:.9;}
+.date-dual input[type="date"]:hover{opacity:1;background:var(--cream2);}
+
+
+/* ============ REVIEW ACTIONS IN MODAL ============ */
+.rev-action-box{background:var(--abg);border:1px solid #FCDDB8;border-radius:10px;padding:16px;margin-top:12px;}
+.rev-action-box h4{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
+.rev-action-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-confirm-cancel{background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
+.btn-confirm-cancel:hover{background:#9b2c2c;}
+.btn-confirm-keep{background:var(--green);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
+.btn-confirm-keep:hover{background:#1f5c3a;}
+
+/* ============ ADD NEW TOOL MODAL ============ */
+.add-mo{position:fixed;inset:0;background:rgba(30,25,18,.55);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.add-mo.open{display:flex;}
+.add-md{background:var(--warm);border:1px solid var(--cborder);border-radius:16px;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;animation:mIn .18s ease;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.add-head{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--cream);border-radius:16px 16px 0 0;}
+.add-head h2{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--td);}
+.add-body{padding:22px 24px;}
+
+/* CONFIRM DIALOG */
+.confirm-mo{position:fixed;inset:0;background:rgba(30,25,18,.6);z-index:400;display:none;align-items:center;justify-content:center;padding:20px;}
+.confirm-mo.open{display:flex;}
+.confirm-box{background:var(--warm);border-radius:14px;padding:28px 30px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.confirm-box h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--td);margin-bottom:10px;}
+.confirm-box p{font-size:13px;color:var(--tm);line-height:1.5;margin-bottom:20px;}
+.confirm-btns{display:flex;gap:10px;justify-content:center;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--td);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:500;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.green{background:var(--green);}
+.toast.red{background:var(--red);}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--cream2);}
+::-webkit-scrollbar-thumb{background:#C8B898;border-radius:3px;}
+
+@media(max-width:860px){
+  .sb{width:180px;min-width:180px;}.mw{margin-left:180px;}
+  .g2,.ga{grid-template-columns:1fr;}.g3{grid-template-columns:1fr 1fr;}
+  .csuite-banner{flex-direction:column;}
+  .cb-left{border-right:none;border-bottom:1px solid rgba(156,125,78,0.2);padding-right:0;padding-bottom:20px;margin-bottom:20px;}
+  .cb-right{padding-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ======= PASSWORD GATE ======= -->
+<div id="pw-gate">
+  <div class="pw-logo">DUNHAM+CO</div>
+  <div class="pw-sub">Tech Stack</div>
+  <div class="pw-box">
+    <div class="pw-lock">🔒</div>
+    <h2>Secure Access</h2>
+    <p>Enter your password to continue</p>
+    <input
+      class="pw-input"
+      id="pw-input"
+      type="password"
+      placeholder="••••••••"
+      autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')checkPW()"
+    >
+    <div class="pw-error" id="pw-error"></div>
+    <button class="pw-btn" onclick="checkPW()">Unlock Dashboard</button>
+  </div>
+  <div class="pw-footer">DUNHAM+CO · Internal Use Only</div>
+</div>
+
+<!-- ======= MAIN APP (hidden until unlocked) ======= -->
+<div id="app-shell" style="display:none;width:100%;">
+
+<aside class="sb">  <div class="sb-logo">
+    <div class="sb-brand">DUNHAM+CO</div>
+    <div class="sb-sub">Tech Stack</div>
+  </div>
+  <div class="sb-incor">
+    <div class="lbl">INCOR / Month</div>
+    <div class="val" id="sb-incor-val">—</div>
+    <div class="sub">Annual ÷ 12 · P&amp;L impact</div>
+  </div>
+  <div class="sb-sec">Overview</div>
+  <div class="ni active" onclick="nav('summary',this)"><span class="ico">⬜</span> Summary</div>
+  <div class="ni" onclick="nav('alltools',this)"><span class="ico">🔧</span> All Tools</div>
+  <div class="sb-sec">Cost</div>
+  <div class="ni" onclick="nav('departments',this)"><span class="ico">🏢</span> By Department</div>
+  <div class="ni" onclick="nav('top15',this)"><span class="ico">📊</span> Top 15 Tools</div>
+  <div class="ni" onclick="nav('review',this)"><span class="ico">⚠️</span> Under Review</div>
+  <div class="sb-sec">Renewals</div>
+  <div class="ni" onclick="nav('renewals',this)"><span class="ico">📅</span> Renewal Tracker</div>
+  <div class="sb-sec">History</div>
+  <div class="ni" onclick="nav('s2025',this)"><span class="ico">✅</span> 2025 Savings</div>
+  <div class="ni" onclick="nav('s2026',this)"><span class="ico">📈</span> 2026 YTD</div>
+  <div class="sb-foot">
+    <div id="sb-date" style="margin-bottom:6px;"></div>
+    <div id="sb-saved" style="font-size:10px;color:var(--smuted);"></div>
+  </div>
+</aside>
+
+<div class="mw">
+  <div class="topbar">
+    <div class="tb-title" id="pt">Executive Summary</div>
+    <div class="tb-right">
+      <div class="tb-meta" id="tb-meta">—</div>
+      <button class="add-btn" onclick="openAddTool()">+ Add Tool</button>
+    </div>
+  </div>
+  <div class="content">
+
+  <!-- SUMMARY -->
+  <div id="sec-summary" class="sec active">
+
+    <!-- C-SUITE HERO BANNER -->
+    <div class="csuite-banner">
+      <div class="cb-left">
+        <div class="cb-label"><span class="cb-icon">📊</span> Amortize · Total Annual Investment</div>
+        <div class="cb-value invest" id="cs-invest">—</div>
+        <div class="cb-desc">Total annualized commitment across all active tools</div>
+        <div class="cb-sub" id="cs-invest-sub">—</div>
+        <div class="cb-chip chip-green">↑ Amortized</div>
+      </div>
+      <div class="cb-right">
+        <div class="cb-label"><span class="cb-icon">📉</span> INCOR · Monthly P&amp;L Impact</div>
+        <div class="cb-value incor" id="cs-incor">—</div>
+        <div class="cb-desc">Amortize ÷ 12 — what hits the P&amp;L every single month</div>
+        <div class="cb-sub" id="cs-incor-sub">—</div>
+        <div class="cb-chip chip-gold" id="cs-trend">↓ Eliminated to date</div>
+      </div>
+    </div>
+
+    <div class="cfon">
+      <strong>CFO Key Numbers:</strong> <strong>Amortize</strong> is the total annual commitment across all active tools.
+      <strong>INCOR</strong> (Annual ÷ 12) is what hits the P&amp;L every single month, regardless of billing cycle.
+      "As we reduce software, INCOR goes down. When we add, it goes up." Watch these two numbers every month.
+    </div>
+    <div class="kpi-row" id="summary-kpis"></div>
+    <div class="ga" style="margin-bottom:18px;">
+      <div class="card"><div class="ct">Top 15 Tools by Annual Cost</div><div class="cs">Click any row for full details</div><div id="t15s"></div></div>
+      <div class="card"><div class="ct">Spend by Department</div><div class="cs">Active tools only</div><div class="ch280"><canvas id="deptC"></canvas></div></div>
+    </div>
+    <div class="g3">
+      <div class="card"><div class="ct">Billing Breakdown</div><div class="cs">Active tools · by cycle</div><div class="ch200"><canvas id="billC"></canvas></div></div>
+      <div class="card"><div class="ct">Tool Status</div><div class="cs" id="total-tools-sub">—</div><div class="ch200"><canvas id="statC"></canvas></div></div>
+      <div class="card"><div class="ct">Renewal Risk</div><div class="cs">Annual cost by window</div><div id="renmini"></div></div>
+    </div>
+  </div>
+
+  <!-- ALL TOOLS -->
+  <div id="sec-alltools" class="sec">
+    <div class="tbar">
+      <input class="si" id="tsrch" placeholder="Search by name, department, admin, users…" oninput="filt()">
+      <select class="fs" id="tstat" onchange="filt()">
+        <option value="">All Statuses</option><option value="active">Active</option>
+        <option value="under review">Under Review</option><option value="cancelled">Cancelled</option>
+      </select>
+      <select class="fs" id="tdept" onchange="filt()"><option value="">All Departments</option></select>
+    </div>
+    <div class="tg" id="tgrid"></div>
+  </div>
+
+  <!-- DEPARTMENTS -->
+  <div id="sec-departments" class="sec">
+    <div class="dg" id="dgrid"></div>
+    <div id="ddet" style="display:none;margin-top:20px;"></div>
+  </div>
+
+  <!-- TOP 15 -->
+  <div id="sec-top15" class="sec">
+    <div class="g2">
+      <div class="card"><div class="ct">Top 15 by Annual Cost</div><div class="cs">Active tools sorted by commitment</div><div id="t15p"></div></div>
+      <div class="card"><div class="ct">Cost Distribution</div><div class="cs">Top 15 tools visual</div><div class="ch320"><canvas id="t15C"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- UNDER REVIEW -->
+  <div id="sec-review" class="sec">
+    <div class="kpi-row" style="margin-bottom:18px;" id="review-kpis"></div>
+    <div class="card"><div class="ct">Tools Under Review</div><div class="cs">Most likely to be cancelled · click for full details &amp; action options</div>
+      <div style="overflow-x:auto;"><table class="rt" id="revtbl"></table></div>
+    </div>
+  </div>
+
+  <!-- RENEWALS -->
+  <div id="sec-renewals" class="sec">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="ct">Renewal Tracker</div>
+      <div class="cs" id="renewal-date-sub">—</div>
+    </div>
+    <div id="rencont"></div>
+  </div>
+
+  <!-- 2025 -->
+  <div id="sec-s2025" class="sec">
+    <div class="kpi-row" style="margin-bottom:18px;">
+      <div class="kc cg"><div class="kl">Tools Cancelled</div><div class="kv">8</div><div class="ks">In 2025</div></div>
+      <div class="kc cgg"><div class="kl">Annual Savings Locked In</div><div class="kv gg">$151,743</div><div class="ks">Recurring per year</div></div>
+      <div class="kc ca"><div class="kl">Largest Single Cut</div><div class="kv ga" style="font-size:24px;">Defendify</div><div class="ks">$48,000/yr</div></div>
+    </div>
+    <div class="card"><div class="ct">Cancelled in 2025</div><div class="cs">$151,743 saved · 8 tools removed</div>
+    <table class="st"><thead><tr><th>Tool</th><th>Department</th><th>Cancelled</th><th style="text-align:right;">Annual Savings</th></tr></thead>
+    <tbody>
+      <tr><td>Defendify</td><td style="color:var(--tm)">Operations</td><td style="color:var(--tm)">Nov 2025</td><td class="sn">$48,000</td></tr>
+      <tr><td>Salesforce</td><td style="color:var(--tm)">Operations</td><td style="color:var(--tm)">Oct 2025</td><td class="sn">$37,800</td></tr>
+      <tr><td>Analytics 8</td><td style="color:var(--tm)">Data</td><td style="color:var(--tm)">Apr 2025</td><td class="sn">$23,831</td></tr>
+      <tr><td>Qlik</td><td style="color:var(--tm)">Data</td><td style="color:var(--tm)">Dec 2025</td><td class="sn">$22,696</td></tr>
+      <tr><td>VizLib</td><td style="color:var(--tm)">Data</td><td style="color:var(--tm)">Dec 2025</td><td class="sn">$17,781</td></tr>
+      <tr><td>Chatbase.co</td><td style="color:var(--tm)">Digital</td><td style="color:var(--tm)">Jan 2025</td><td class="sn">$1,188</td></tr>
+      <tr><td>Typeform</td><td style="color:var(--tm)">Creative</td><td style="color:var(--tm)">Nov 2025</td><td class="sn">$447</td></tr>
+      <tr><td>Beyond the Bit</td><td style="color:var(--tm)">—</td><td style="color:var(--tm)">May 2025</td><td style="text-align:right;color:var(--tm);font-size:11px;">no cost on record</td></tr>
+      <tr class="stot"><td colspan="3">Total 2025 savings</td><td class="sn" style="color:var(--green);">$151,743 / year</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <!-- 2026 YTD -->
+  <div id="sec-s2026" class="sec">
+    <div class="kpi-row" style="margin-bottom:18px;" id="ytd-kpis"></div>
+    <div class="g2" style="margin-bottom:18px;">
+      <div class="card">
+        <div class="ct">Cancelled in 2026</div>
+        <div class="cs" id="ytd-cancelled-sub">—</div>
+        <table class="st"><thead><tr><th>Tool</th><th>Cancelled</th><th style="text-align:right;">Savings</th></tr></thead>
+        <tbody id="ytd-cancelled-body"></tbody></table>
+      </div>
+      <div class="card"><div class="ct">Two-Year Summary</div><div class="cs">Combined since Jan 2025</div>
+        <div style="margin-top:6px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2025 cancelled (8 tools)</span><span style="color:var(--green);font-weight:600;">$151,743</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;" id="ytd-2026-row"><span>2026 cancelled</span><span style="color:var(--green);font-weight:600;">—</span></div>
+          <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:16px;font-weight:700;" id="ytd-total-row"><span>Total eliminated</span><span style="color:var(--green);">—</span></div>
+          <div style="border-top:2px solid var(--border);padding-top:13px;">
+            <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">If all under-review tools are cancelled:</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tm);margin-bottom:3px;" id="proj-active">—</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--red);margin-bottom:7px;" id="proj-review">—</div>
+            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;" id="proj-total">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">New Tools Added in 2026</div>
+      <div class="cs" id="ytd-added-sub">—</div>
+      <table class="st"><thead><tr><th>Tool</th><th>Start Date</th><th>Department</th><th style="text-align:right;">Annual Cost</th></tr></thead>
+      <tbody id="ytd-added-body"></tbody></table>
+    </div>
+  </div>
+
+  </div><!-- /content -->
+</div><!-- /mw -->
+
+<!-- VIEW/EDIT MODAL -->
+<div class="mo" id="mover" onclick="closeMO(event)">
+  <div class="md" id="minner">
+    <div class="mhd">
+      <div><div class="mt" id="mtit">Tool</div><div style="margin-top:7px;" id="mstat"></div></div>
+      <div class="mhd-right">
+        <button class="medit-btn" id="editToggleBtn" onclick="toggleEdit()">✏️ Edit</button>
+        <button class="mcl" onclick="closeMB()">✕</button>
+      </div>
+    </div>
+    <div class="mb" id="mbody"></div>
+  </div>
+</div>
+
+<!-- ADD NEW TOOL MODAL -->
+<div class="add-mo" id="add-modal" onclick="closeAddIfBg(event)">
+  <div class="add-md">
+    <div class="add-head">
+      <h2>+ Add New Tool</h2>
+      <button class="mcl" onclick="closeAddTool()">✕</button>
+    </div>
+    <div class="add-body">
+      <div class="ef-grid">
+        <div class="ef-group"><label>Tool Name *</label><input id="an-name" placeholder="e.g. Notion"></div>
+        <div class="ef-group"><label>Status</label>
+          <select id="an-st"><option value="active">Active</option><option value="under review">Under Review</option><option value="cancelled">Cancelled</option></select>
+        </div>
+        <div class="ef-group ef-full"><label>Definition / Description</label><textarea id="an-def" rows="2" placeholder="What does this tool do?"></textarea></div>
+        <div class="ef-group"><label>Department</label>
+          <select id="an-dept">
+            <option value="Accounting">Accounting</option><option value="All Departments">All Departments</option>
+            <option value="Creative">Creative</option><option value="Data">Data</option>
+            <option value="Digital">Digital</option><option value="Donor Advancement">Donor Advancement</option>
+            <option value="HR">HR</option><option value="Major Gift">Major Gift</option>
+            <option value="Marketing">Marketing</option><option value="Media">Media</option>
+            <option value="Multi">Multi</option><option value="Operations">Operations</option>
+            <option value="Ops">Ops</option><option value="Other">Other</option>
+            <option value="Unassigned">Unassigned</option>
+          </select>
+        </div>
+        <div class="ef-group"><label>Admin / Owner</label><input id="an-adm" placeholder="e.g. Patricia"></div>
+        <div class="ef-group"><label>Monthly Subscription ($)</label><input id="an-ms" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="ef-group"><label>Annual Subscription ($)</label><input id="an-as" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="ef-group"><label>Total Annual Amount ($)</label><input id="an-ta" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="ef-group"><label>Contract Terms</label><input id="an-ct" placeholder="e.g. Annually, Monthly"></div>
+        <div class="ef-group"><label>Billing Terms</label><input id="an-bt" placeholder="e.g. Monthly, Annually"></div>
+        <div class="ef-group"><label>Cancellation Terms</label><input id="an-cant" placeholder="e.g. 30 days"></div>
+        <div class="ef-group"><label>Start Date <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">(YYYY-MM-DD or pick)</span></label><div class="date-dual"><input id="an-sd" type="text" placeholder="e.g. 2026-09-01" oninput="syncDatePicker('an-sd','an-sd-pick')"><input id="an-sd-pick" type="date" title="Pick date" onchange="syncDateText('an-sd-pick','an-sd')"></div></div>
+        <div class="ef-group"><label>Renewal Date <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">(YYYY-MM-DD or pick)</span></label><div class="date-dual"><input id="an-rd" type="text" placeholder="e.g. 2027-01-15" oninput="syncDatePicker('an-rd','an-rd-pick')"><input id="an-rd-pick" type="date" title="Pick date" onchange="syncDateText('an-rd-pick','an-rd')"></div></div>
+        <div class="ef-group"><label>Licenses / Seats</label><input id="an-lic" placeholder="e.g. 10, Unlimited"></div>
+        <div class="ef-group"><label>Internal / External</label><input id="an-ie" placeholder="e.g. Internal, External"></div>
+        <div class="ef-group"><label>Tool Users</label><input id="an-tu" placeholder="Names or team"></div>
+        <div class="ef-group ef-full"><label>📦 Box Contract Link</label><input id="an-box" placeholder="https://dunham.box.com/..."></div>
+        <div class="ef-group ef-full"><label>Integrations</label><input id="an-int" placeholder="e.g. Snowflake, DBT"></div>
+        <div class="ef-group ef-full"><label>AI Recommendation</label><input id="an-ai" placeholder="Any AI-suggested action"></div>
+        <div class="ef-group ef-full"><label>Notes</label><textarea id="an-notes" rows="3" placeholder="Internal notes, action items…"></textarea></div>
+      </div>
+      <div class="ef-actions">
+        <button class="ef-save" onclick="saveNewTool()">Save Tool</button>
+        <button class="ef-cancel" onclick="closeAddTool()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-mo" id="confirm-mo">
+  <div class="confirm-box">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-msg">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="btn-confirm-cancel" id="confirm-yes">Yes, proceed</button>
+      <button class="ef-cancel" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Saved!</div>
+
+<script>
+// ============================================================
+// DATE — always live
+// ============================================================
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+
+function fmtDate(d){
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+document.getElementById('sb-date').textContent = fmtDate(TODAY);
+document.getElementById('renewal-date-sub').textContent = 'Real-time as of '+fmtDate(TODAY)+' · dates recalculate automatically';
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n){if(!n||n===0)return '$0';return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fmt2(n){if(!n||n===0)return '$0';return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function dU(ds){
+  if(!ds||['No','Free','free','no','charge'].some(x=>ds.toLowerCase().includes(x)))return null;
+  try{const d=new Date(ds);d.setHours(0,0,0,0);if(isNaN(d))return null;return Math.round((d-TODAY)/86400000);}catch{return null;}
+}
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'green');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ============================================================
+// DATA
+// ============================================================
+let T=[
+{"name":"Adobe Acrobat Pro + Creative Cloud Suite","def":"PDF editing suite plus Adobe's full suite of design apps (Photoshop, Illustrator, Premiere, etc.).","sd":"","rd":"2027-01-23","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":1130.97,"as":0,"ta":13571.64,"ie":"Internal","dept":"Multi","adm":"Admin","lic":"19","cp":"","sn":"","int":"","tu":"Andrew Lazzara, Brooke DeLage, Dan Sumpter, Debbie Calevich, Michael Richardson, Michelle Stephens, Scott Peck/Catherine Velazco, Erin, Jacklyn, Lee, Lexie, Mike Pettus, Rick, Trent","ai":"","notes":"11 licenses for Adobe and 8 for the Cloud Suite","box":""},
+{"name":"Adobe Express","def":"Simplified Adobe design tool for quickly creating social posts, flyers, and branded content.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"Monthly","cant":"30 days","ms":17.31,"as":0,"ta":207.72,"ie":"Internal","dept":"Unassigned","adm":"Admin","lic":"1","cp":"","sn":"","int":"","tu":"NO User","ai":"","notes":"Needs to be cancelled — no user assigned","box":""},
+{"name":"Adobe InDesign - Pro Edition","def":"Professional page layout and desktop publishing software for print and digital design.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"Monthly","cant":"30 days","ms":32.46,"as":0,"ta":389.52,"ie":"Internal","dept":"Unassigned","adm":"Admin","lic":"1","cp":"","sn":"","int":"","tu":"No user","ai":"","notes":"Needs to be cancelled — no users assigned","box":""},
+{"name":"Adriel","def":"Ad campaign management and creative analytics dashboard.","sd":"","rd":"2026-09-10","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":249,"as":0,"ta":2988,"ie":"Internal","dept":"Media","adm":"Haley","lic":"1","cp":"","sn":"","int":"","tu":"Haley Johnson","ai":"","notes":"","box":""},
+{"name":"Agency Analytics","def":"Marketing reporting platform for aggregating campaign data across channels.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":620.2,"as":0,"ta":7442.4,"ie":"Internal/external","dept":"Media","adm":"Patricia","lic":"Unlimited","cp":"","sn":"","int":"","tu":"Haley Johnson; Abbie; Madison","ai":"What is the use case here?","notes":"Need to change Patricia to Admin","box":""},
+{"name":"AirTable","def":"Flexible database and project management tool that combines spreadsheets with app-like functionality.","sd":"","rd":"","cd":"","st":"under review","ct":"","bt":"Monthly","cant":"60 days","ms":172.69,"as":0,"ta":2072.28,"ie":"","dept":"Creative","adm":"Scott","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Per Creative team this can be cancelled. Check with accounting to see last charge.","box":""},
+{"name":"Artlist","def":"Music and sound effects licensing platform for video and content creators.","sd":"2026-01-21","rd":"2027-01-21","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":10000,"ta":10000,"ie":"External","dept":"Creative","adm":"Michael","lic":"3","cp":"","sn":"","int":"","tu":"Michael Richardson, Dan","ai":"","notes":"One time charge on the credit card","box":""},
+{"name":"Bit.ly","def":"URL shortener and link tracking tool for monitoring click performance.","sd":"","rd":"Free plan","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"External","dept":"Digital","adm":"Madison","lic":"0","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"No charge — needs to be removed","box":""},
+{"name":"Box","def":"Cloud file storage and collaboration platform for sharing and managing documents.","sd":"","rd":"2027-01-28","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":2628.48,"as":0,"ta":31541.76,"ie":"Internal","dept":"All Departments","adm":"Admin","lic":"74","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Brivo (Platinum Safety & Security)","def":"Cloud-based physical access control and security system.","sd":"","rd":"2027-02-01","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":1169.1,"ta":1169.1,"ie":"External","dept":"Operations","adm":"Erin/Patricia","lic":"100","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"Contracts start at 50 or 100 users.","box":""},
+{"name":"Canva","def":"Easy-to-use graphic design platform for creating social media, marketing, and print assets.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":59.97,"as":0,"ta":719.64,"ie":"Internal/external","dept":"Digital","adm":"Digital Email","lic":"1","cp":"","sn":"","int":"","tu":"Madison/Lydia","ai":"Move to annual plan","notes":"","box":""},
+{"name":"ChatGPT / OpenAI","def":"AI assistant used for drafting content, answering questions, and automating tasks.","sd":"","rd":"No contract","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":117.04,"as":0,"ta":1404.48,"ie":"Internal","dept":"Operations","adm":"CS and Creative","lic":"2","cp":"","sn":"","int":"","tu":"Creative, Client Success Team","ai":"Review individual license costs / move to annual","notes":"Two charges: 30th $95.76 and 19th $21.28","box":""},
+{"name":"ClickUp","def":"Project management and work tracking platform.","sd":"","rd":"2027-07-15","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":8877.37,"ta":8877.37,"ie":"Internal","dept":"Operations","adm":"Erin, Debbie, Josh","lic":"50","cp":"","sn":"","int":"","tu":"50 Dunham staff members","ai":"","notes":"Need to switch Josh license to Admin","box":""},
+{"name":"Cloud Ways","def":"Managed cloud hosting platform for websites and web applications.","sd":"","rd":"No Contract","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":68.85,"as":0,"ta":826.2,"ie":"Internal","dept":"Operations","adm":"Digital/Patricia","lic":"1","cp":"","sn":"","int":"","tu":"Digital email","ai":"Move to annual plan","notes":"","box":""},
+{"name":"Cloudflare","def":"Web security and performance platform providing DDoS protection and CDN.","sd":"","rd":"Free plan","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Other","adm":"Admin","lic":"","cp":"","sn":"","int":"","tu":"Admin email","ai":"","notes":"","box":""},
+{"name":"Comscore","def":"Cross-platform audience measurement and media planning analytics.","sd":"","rd":"2026-12-15","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"60 days","ms":0,"as":131468.77,"ta":131468.77,"ie":"Internal/external","dept":"Media","adm":"Catherine","lic":"","cp":"","sn":"","int":"","tu":"Creative Team","ai":"","notes":"","box":""},
+{"name":"Coursera","def":"Online learning platform offering professional courses and certifications.","sd":"","rd":"2026-02-02","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"No Cancellation","ms":0,"as":399,"ta":399,"ie":"Internal","dept":"Accounting","adm":"Lee","lic":"1","cp":"","sn":"","int":"","tu":"Lee","ai":"","notes":"","box":""},
+{"name":"DBT","def":"Data transformation tool that turns raw data into clean, analysis-ready tables.","sd":"","rd":"No contract","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":746.2,"as":0,"ta":8954.4,"ie":"Dunham Insights","dept":"Data","adm":"Data science","lic":"4","cp":"","sn":"","int":"","tu":"Gloo, Patricia","ai":"","notes":"","box":""},
+{"name":"Dubble","def":"Screen recording and documentation tool.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":64,"as":0,"ta":768,"ie":"Internal","dept":"Operations","adm":"Patricia","lic":"1","cp":"","sn":"","int":"","tu":"datascience@dunhamandcompany.com","ai":"","notes":"","box":""},
+{"name":"Email Timers","def":"Adds live countdown timers inside email campaigns to drive urgency.","sd":"","rd":"No contract","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":9,"as":0,"ta":108,"ie":"Internal","dept":"Digital","adm":"Billy Email","lic":"1","cp":"","sn":"","int":"","tu":"Lydia","ai":"","notes":"","box":""},
+{"name":"Envato","def":"Marketplace for creative assets including templates, fonts, graphics, and stock video.","sd":"","rd":"2026-07-29","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"","ms":0,"as":214.34,"ta":214.34,"ie":"Internal/external","dept":"Creative","adm":"Scott Peck","lic":"1","cp":"","sn":"","int":"","tu":"Michael, Andrew","ai":"","notes":"Change from Scott user to the creative email","box":""},
+{"name":"Fathom AI Notetaker","def":"AI meeting assistant that records, transcribes, and summarizes video calls.","sd":"","rd":"2027-03-18","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"No Cancellation","ms":0,"as":6384,"ta":6384,"ie":"Internal","dept":"Operations","adm":"Erin, Patricia, Lydia","lic":"30","cp":"","sn":"","int":"","tu":"30 Dunham staff members","ai":"","notes":"Lee accrues for this monthly — confirm amount/contract","box":""},
+{"name":"Figma","def":"Collaborative UI/UX design and prototyping tool used for web and digital design.","sd":"","rd":"2026-02-03","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":148.96,"as":0,"ta":1787.52,"ie":"External","dept":"Creative","adm":"Admin","lic":"5","cp":"","sn":"","int":"","tu":"Contractors, Jeremy, Michael, Mike, Admin","ai":"Move to annual plan","notes":"","box":""},
+{"name":"FiveTran","def":"Automated data pipeline tool that syncs data from various sources into a data warehouse.","sd":"","rd":"No Contract","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":0,"as":0,"ta":0,"ie":"Dunham Insights","dept":"Data","adm":"Data science","lic":"","cp":"","sn":"","int":"Snowflake","tu":"Gloo, Patricia, Accounting AP, Data science, Ryan","ai":"","notes":"","box":""},
+{"name":"Frame.io","def":"Video review and collaboration platform for sharing footage and collecting time-stamped feedback.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"Monthly","cant":"","ms":319.2,"as":0,"ta":3830.4,"ie":"Internal/external","dept":"Creative","adm":"Michael","lic":"2","cp":"","sn":"","int":"","tu":"Dan, Michael","ai":"","notes":"","box":""},
+{"name":"Galeforce Media","def":"Media buying and broadcast advertising management platform.","sd":"2025-09-10","rd":"2026-09-10","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"","ms":769,"as":0,"ta":9228,"ie":"Internal/external","dept":"Media","adm":"Tom, Catherine","lic":"8","cp":"","sn":"6 Licenses","int":"","tu":"Catherine, Haley, Abbie, Travis, Tom","ai":"","notes":"","box":""},
+{"name":"Getty Images","def":"Premium stock photo and video licensing platform.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":767.68,"as":0,"ta":9212.16,"ie":"Internal/external","dept":"Creative","adm":"Debbie","lic":"2","cp":"","sn":"","int":"","tu":"Creative team; Freelancers","ai":"","notes":"","box":""},
+{"name":"GitHub","def":"Code hosting and version control platform for storing and collaborating on scripts/code.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":0,"as":0,"ta":0,"ie":"Dunham Insights","dept":"Data","adm":"Patricia, Alex Gloo, Ryan","lic":"5","cp":"","sn":"","int":"DBT","tu":"","ai":"","notes":"Saw a charge in May — need to verify","box":""},
+{"name":"Gmail / Google Suite","def":"Google's email and workspace platform (Gmail, Analytics, YouTube, Tag Manager, Search Console, etc.).","sd":"","rd":"Free","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"","dept":"Digital","adm":"GA4","lic":"","cp":"","sn":"","int":"","tu":"Digital team","ai":"","notes":"Free — includes all Google properties","box":""},
+{"name":"Go Daddy","def":"Domain registration and web hosting provider.","sd":"","rd":"2026-09-01","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"No Cancellation","ms":0,"as":522.02,"ta":522.02,"ie":"Internal","dept":"Ops","adm":"Admin","lic":"1","cp":"","sn":"","int":"","tu":"Admin","ai":"","notes":"","box":""},
+{"name":"Google One","def":"Google cloud storage subscription for expanded Drive, Gmail, and Photos storage.","sd":"","rd":"","cd":"","st":"under review","ct":"Monthly","bt":"Monthly","cant":"","ms":1.99,"as":0,"ta":23.88,"ie":"","dept":"Digital","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Digital is not using this and does not know what this is. Last charge 1/1/2026","box":""},
+{"name":"Hover","def":"Domain name registration and management service.","sd":"","rd":"2027-02-28","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"","ms":50,"as":0,"ta":600,"ie":"Internal","dept":"Ops","adm":"Admin","lic":"1","cp":"","sn":"","int":"","tu":"Admin","ai":"","notes":"","box":""},
+{"name":"iWave Donor Advancement","def":"Donor research platform for wealth screening and philanthropic history.","sd":"","rd":"2027-10-01","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"No Cancellation","ms":0,"as":5580.4,"ta":5580.4,"ie":"External","dept":"Major Gift","adm":"Erik","lic":"1","cp":"","sn":"","int":"","tu":"Erik","ai":"","notes":"","box":""},
+{"name":"Jasper","def":"AI writing assistant for generating marketing copy, ads, and content.","sd":"","rd":"2026-04-05","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":30.91,"as":0,"ta":370.92,"ie":"Internal","dept":"Media","adm":"Haley, Abbie, Digital","lic":"3","cp":"","sn":"","int":"","tu":"Haley, Abbie, Digital Email","ai":"Is this required? Possible ChatGPT overlap?","notes":"","box":""},
+{"name":"Kipplinger","def":"Financial news and personal finance publication; staff subscription.","sd":"","rd":"","cd":"","st":"under review","ct":"Annually","bt":"Annually","cant":"","ms":0,"as":124,"ta":124,"ie":"","dept":"Unassigned","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Lee used it in 2023 — charges continue. Needs to be cancelled but no login found.","box":""},
+{"name":"LastPass","def":"Password manager for securely storing and sharing team credentials.","sd":"","rd":"2026-10-09","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"60 days","ms":0,"as":2718.34,"ta":2718.34,"ie":"Internal","dept":"Operations","adm":"Erin, Patricia","lic":"70","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Leadr","def":"People development and 1-on-1 meeting platform for managers and their teams.","sd":"","rd":"2026-05-04","cd":"","st":"active","ct":"Annually","bt":"","cant":"30 days","ms":0,"as":6840,"ta":6840,"ie":"Internal","dept":"Operations","adm":"Erin","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Cancelled — will take effect on renewal date","box":""},
+{"name":"Liberated Syndication","def":"Podcast hosting and distribution platform (Libsyn).","sd":"","rd":"","cd":"","st":"under review","ct":"Monthly","bt":"Monthly","cant":"","ms":12.99,"as":0,"ta":155.88,"ie":"","dept":"Marketing","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Might be Creative. Last charge 1/1/2026","box":""},
+{"name":"Loomly","def":"Social media management and scheduling platform for planning and publishing content.","sd":"","rd":"2026-03-25","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":1672.61,"ta":1672.61,"ie":"","dept":"Digital","adm":"Digital Email","lic":"1","cp":"","sn":"","int":"","tu":"Jarrett","ai":"","notes":"","box":""},
+{"name":"LucidChart","def":"Diagramming and visual collaboration tool for flowcharts and org charts.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":11.73,"as":0,"ta":140.76,"ie":"Internal","dept":"Major Gift","adm":"Erik","lic":"","cp":"","sn":"","int":"","tu":"Erik","ai":"","notes":"Double check with Erik","box":""},
+{"name":"Lumen Internet","def":"Business internet and network connectivity provider.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":570.38,"as":0,"ta":6844.56,"ie":"","dept":"Operations","adm":"Erin/Admin","lic":"1","cp":"","sn":"","int":"","tu":"Admin","ai":"","notes":"","box":""},
+{"name":"Mailchimp","def":"Email marketing platform for designing, sending, and tracking email campaigns.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":255.84,"as":0,"ta":3070.08,"ie":"External","dept":"Marketing","adm":"","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"Move to annual plan","notes":"Marketing should know","box":""},
+{"name":"Microsoft | Clarity","def":"Free Microsoft web analytics tool with heatmaps and session recordings.","sd":"Free","rd":"","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Digital","adm":"Digital Login","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free for Digital","box":""},
+{"name":"Microsoft | Defender","def":"Microsoft endpoint security and antivirus protection platform.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":346.45,"as":0,"ta":4157.4,"ie":"","dept":"Operations","adm":"OPS, Gloo 360","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"Gloo IT","box":""},
+{"name":"Microsoft | Entra ID P1","def":"Identity and access management for securing user logins and SSO.","sd":"","rd":"2027-01-22","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":434.92,"as":0,"ta":5219.04,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"43","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Microsoft | Exchange Online","def":"Microsoft's cloud-based email and calendar service.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":174.68,"as":0,"ta":2096.16,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Microsoft | 365 Business Premium","def":"Enterprise Microsoft 365 license including Word, Excel, Teams, and more.","sd":"","rd":"2026-08-25","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"60 days","ms":1881.39,"as":0,"ta":22576.68,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"81","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Musicbed","def":"Licensed music platform for syncing high-quality tracks to video and commercial content.","sd":"","rd":"2027-05-15","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":109.99,"as":0,"ta":1319.88,"ie":"External","dept":"Creative","adm":"Admin","lic":"2","cp":"","sn":"","int":"","tu":"Michael; Dan","ai":"","notes":"","box":""},
+{"name":"Nielsen Audio","def":"Radio audience measurement and ratings service.","sd":"","rd":"2028-03-01","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":2558.14,"as":0,"ta":30697.68,"ie":"Internal/external","dept":"Media","adm":"Travis","lic":"","cp":"","sn":"","int":"","tu":"Travis, Jim, Catherine","ai":"Is this client specific?","notes":"Contract is from 04/2025–03/2028","box":""},
+{"name":"Octopus.do","def":"Website wireframing and sitemap planning tool.","sd":"","rd":"No charge","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"","dept":"Digital","adm":"Madison","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free — confirmed no charges with accounting","box":""},
+{"name":"Opus","def":"AI-powered video repurposing tool that clips long-form video into short highlights.","sd":"","rd":"2026-03-25","cd":"","st":"under review","ct":"Annually","bt":"Annually","cant":"","ms":0,"as":113.97,"ta":113.97,"ie":"External","dept":"Digital","adm":"Karyna","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Creative is not using this tool. Ask Digital to confirm cancellation and stop charges.","box":""},
+{"name":"Otter","def":"AI transcription and note-taking tool for meetings.","sd":"","rd":"2027-04-01","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"","ms":0,"as":240,"ta":240,"ie":"Internal/external","dept":"Creative","adm":"Debbie","lic":"1","cp":"","sn":"","int":"","tu":"Creative Team","ai":"","notes":"","box":""},
+{"name":"Paddle.Net","def":"Payment infrastructure and subscription billing platform.","sd":"","rd":"2026-09-16","cd":"","st":"under review","ct":"Annually","bt":"Annually","cant":"","ms":0,"as":108,"ta":108,"ie":"","dept":"Creative","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Creative is not using this tool. See charges and cancel. May need to find who is using this.","box":""},
+{"name":"Pandora","def":"Streaming music/audio platform; used for media or licensing.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"Monthly","cant":"","ms":9.72,"as":0,"ta":116.64,"ie":"Internal","dept":"All Departments","adm":"Brian","lic":"2","cp":"","sn":"","int":"","tu":"Brian","ai":"","notes":"Ask Brian — 2 credit card charges/month","box":""},
+{"name":"Planning Center","def":"Church management software for scheduling, giving, and ministry coordination.","sd":"","rd":"","cd":"","st":"under review","ct":"","bt":"Monthly","cant":"","ms":15.96,"as":0,"ta":191.52,"ie":"External","dept":"Unassigned","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Might be client only — check charges with accounting. Last charge 1/16/2026","box":""},
+{"name":"Rippling","def":"HR, payroll, and IT management platform for employee lifecycle management.","sd":"2026-03-01","rd":"2027-03-01","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":2155,"as":0,"ta":25860,"ie":"Internal","dept":"HR","adm":"Erin/HR","lic":"","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Riverside.fm Podcast Studio","def":"High-quality podcast and video recording studio platform.","sd":"","rd":"","cd":"","st":"active","ct":"Annually","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"","dept":"Other","adm":"Michael Richardson","lic":"3","cp":"","sn":"","int":"","tu":"Chris Lawson, Michael Richardson, Dan","ai":"","notes":"","box":""},
+{"name":"SEOptimer","def":"SEO audit and reporting tool for analyzing website search performance.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"","dept":"Digital","adm":"Madison","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free for Digital","box":""},
+{"name":"Slack Pro","def":"Team messaging and collaboration platform for internal communication.","sd":"2026-01-23","rd":"2027-01-22","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Operations","adm":"Admins, Ops Team","lic":"52","cp":"","sn":"","int":"","tu":"52 Dunham staff members","ai":"","notes":"","box":""},
+{"name":"Smartsheet","def":"Work management and project tracking platform using spreadsheet-style views.","sd":"","rd":"2026-10-09","cd":"","st":"under review","ct":"Other","bt":"Annually","cant":"","ms":0,"as":230.26,"ta":230.26,"ie":"Internal/external","dept":"Operations","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"De-duplicate with Smartsheet / Typeform","notes":"Can't find the owner. Might need to cancel before renewal.","box":""},
+{"name":"Snowflake","def":"Cloud data warehouse for storing and querying large volumes of data.","sd":"","rd":"","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":2665,"as":0,"ta":31980,"ie":"Dunham Insights","dept":"Data","adm":"Patricia, Alex Gloo, Ryan","lic":"","cp":"","sn":"","int":"","tu":"","ai":"Potential to move to annual","notes":"","box":""},
+{"name":"Spotify","def":"Music and podcast streaming platform.","sd":"","rd":"","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Unassigned","adm":"Brian","lic":"","cp":"","sn":"","int":"","tu":"The Front Office","ai":"","notes":"Free","box":""},
+{"name":"Spreaker","def":"Live podcast broadcasting and hosting platform.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":120,"as":0,"ta":1440,"ie":"Internal/external","dept":"Creative","adm":"Michael","lic":"2","cp":"","sn":"","int":"","tu":"Michael, Chris Lawson","ai":"","notes":"Ask Chris Lawson","box":""},
+{"name":"Stripo","def":"Email template builder with advanced drag-and-drop design features.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":95,"as":0,"ta":1140,"ie":"Internal/external","dept":"Digital","adm":"Madison","lic":"3","cp":"","sn":"","int":"","tu":"Madison, Lydia, Gabs","ai":"","notes":"","box":""},
+{"name":"Supermetrics","def":"Marketing data aggregator that pulls ad/analytics data into spreadsheets or dashboards.","sd":"","rd":"","cd":"","st":"under review","ct":"","bt":"Monthly","cant":"","ms":255,"as":0,"ta":3060,"ie":"Internal","dept":"Data","adm":"Patricia dunhamdata@","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Need to stop charges","box":""},
+{"name":"Tableau","def":"Data visualization and business intelligence tool for creating interactive reports.","sd":"2025-07-31","rd":"2026-08-30","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":22326.3,"ta":22326.3,"ie":"Dunham Insights","dept":"Data","adm":"Alex","lic":"15","cp":"","sn":"","int":"","tu":"","ai":"","notes":"","box":""},
+{"name":"Vimeo on Gold CC","def":"Video hosting and sharing platform (Gold plan) for storing and distributing video content.","sd":"","rd":"2026-06-11","cd":"","st":"under review","ct":"","bt":"Annually","cant":"","ms":0,"as":115.12,"ta":115.12,"ie":"Internal/external","dept":"Unassigned","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Creative is no longer using this tool. Start cancellation. Good to cancel.","box":""},
+{"name":"Vimeo on Platinum CC","def":"Video hosting and sharing platform (Platinum plan) with advanced privacy and analytics.","sd":"","rd":"2026-04-09","cd":"","st":"under review","ct":"","bt":"Annually","cant":"","ms":0,"as":959.4,"ta":959.4,"ie":"Internal/external","dept":"Unassigned","adm":"","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Creative is no longer using this tool. Start cancellation.","box":""},
+{"name":"WAMJ","def":"Radio station or broadcast media asset — licensed or operational tool.","sd":"","rd":"2026-09-04","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"60 days","ms":0,"as":17573.55,"ta":17573.55,"ie":"Internal","dept":"HR","adm":"Lee; Katherine","lic":"","cp":"","sn":"","int":"","tu":"All Dunham Staff","ai":"","notes":"","box":""},
+{"name":"We Transfer","def":"File transfer service for sending large files and creative assets quickly.","sd":"","rd":"2026-05-28","cd":"","st":"active","ct":"","bt":"Annually","cant":"","ms":0,"as":120,"ta":120,"ie":"","dept":"Creative","adm":"Michael","lic":"1","cp":"","sn":"","int":"","tu":"Michael; Dunham Studio","ai":"","notes":"Paid $1,990 on 5/28/25 — charged 10x, refund not yet received","box":""},
+{"name":"Wordpress DI","def":"WordPress hosting for Dunham Insights.","sd":"","rd":"2027-04-11","cd":"","st":"active","ct":"Annually","bt":"","cant":"","ms":0,"as":44.1,"ta":44.1,"ie":"Internal/external","dept":"All Departments","adm":"Admin","lic":"3","cp":"","sn":"","int":"","tu":"Marketing team, Digital, Ops","ai":"","notes":"","box":""},
+{"name":"Zapier","def":"Automation platform that connects apps and automates workflows without coding.","sd":"","rd":"2027-02-13","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"No Cancellation","ms":0,"as":2931.5,"ta":2931.5,"ie":"Internal/external","dept":"Marketing","adm":"Digital","lic":"5","cp":"","sn":"","int":"","tu":"Digital, Marketing","ai":"","notes":"","box":""},
+{"name":"Zoho Analytics","def":"Self-service BI and analytics platform for building dashboards and reports.","sd":"","rd":"2026-10-26","cd":"","st":"under review","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":154.57,"as":0,"ta":1854.84,"ie":"Internal/external","dept":"Data","adm":"Danielle","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Could not find login. Digital is no longer using this. Good to cancel.","box":""},
+{"name":"Zoho Backstage","def":"Event management platform for planning, promoting, and running events.","sd":"","rd":"2026-12-01","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":265.43,"as":0,"ta":3185.16,"ie":"Internal","dept":"Creative","adm":"Megan Magnuson","lic":"1","cp":"","sn":"","int":"","tu":"Megan","ai":"","notes":"For summit","box":""},
+{"name":"Zoho Pagesense","def":"Website optimization tool with heatmaps, session recordings, and A/B testing.","sd":"","rd":"","cd":"","st":"under review","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":52.23,"as":0,"ta":626.76,"ie":"Internal/external","dept":"Data","adm":"Danielle@","lic":"","cp":"","sn":"","int":"","tu":"","ai":"","notes":"Could not find login. Digital is no longer using this. Good to cancel.","box":""},
+{"name":"Zoom | Room Connect","def":"Video conferencing platform with room hardware integration.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"No Cancellation","ms":408.28,"as":0,"ta":4899.36,"ie":"Internal/external","dept":"Operations","adm":"Erin, Brian","lic":"9","cp":"","sn":"","int":"","tu":"9 Dunham accounts","ai":"Can we move to Teams rooms?","notes":"Only 1 credit card charge per month for Zoom","box":""},
+{"name":"Kindsight","def":"Donor prospect research and wealth screening tool for fundraising teams.","sd":"2025-12-11","rd":"2027-11-11","cd":"","st":"active","ct":"Annually","bt":"Annually","cant":"30 days","ms":0,"as":459.18,"ta":459.18,"ie":"Internal/external","dept":"Donor Advancement","adm":"Erik","lic":"1","cp":"","sn":"","int":"","tu":"Erik","ai":"","notes":"","box":""}
+];
+
+// ============================================================
+// COMPUTED STATS
+// ============================================================
+function actv(){return T.filter(t=>t.st==='active');}
+function underReview(){return T.filter(t=>t.st==='under review');}
+function cancelled(){return T.filter(t=>t.st==='cancelled');}
+
+function computeStats(){
+  const a=actv();
+  const totalAnnual=a.reduce((s,t)=>s+(+t.ta||0),0);
+  const incor=totalAnnual/12;
+  const reviewSavings=underReview().reduce((s,t)=>s+(+t.ta||0),0);
+  return {totalAnnual,incor,reviewSavings,active:a.length,review:underReview().length,total:T.length};
+}
+
+// ============================================================
+// CHART INSTANCES (for destroy/recreate on refresh)
+// ============================================================
+const charts={};
+function makeChart(id,config){
+  if(charts[id]){charts[id].destroy();}
+  const el=document.getElementById(id);
+  if(!el)return;
+  charts[id]=new Chart(el,config);
+}
+
+Chart.defaults.color='#8A7A68';
+Chart.defaults.borderColor='rgba(0,0,0,0.05)';
+const GLD='#9C7D4E',GD2='#B89A60',GRN='#2E7D52',RED='#C0392B',AMB='#B8610A',BLU='#2563A8';
+
+// ============================================================
+// RENDER SUMMARY SECTION
+// ============================================================
+function renderSummary(){
+  const s=computeStats();
+  const incorFmt=fmt(Math.round(s.incor));
+  document.getElementById('sb-incor-val').textContent=incorFmt;
+
+  // C-suite banner
+  document.getElementById('cs-invest').textContent=fmt(Math.round(s.totalAnnual));
+  document.getElementById('cs-invest-sub').textContent=`${s.active} active tools · as of ${fmtDate(TODAY)}`;
+  document.getElementById('cs-incor').textContent=incorFmt;
+  document.getElementById('cs-incor-sub').textContent=`Amortize ÷ 12 · ${s.review} tools under review`;
+  document.getElementById('cs-trend').textContent=`↓ $193,580 eliminated since Jan 2025`;
+
+  // KPI row
+  document.getElementById('summary-kpis').innerHTML=`
+    <div class="kc cg"><div class="kl">Amortized Annual Cost</div><div class="kv gc" style="font-size:34px;">${fmt(Math.round(s.totalAnnual))}</div><div class="ks">All active tools · total annual</div></div>
+    <div class="kc cgg"><div class="kl">INCOR — Monthly P&amp;L</div><div class="kv gg" style="font-size:34px;">${incorFmt}</div><div class="ks">Annual ÷ 12 · true monthly cost</div></div>
+    <div class="kc cg"><div class="kl">Active Tools</div><div class="kv" style="font-size:44px;">${s.active}</div><div class="ks">Across all departments</div></div>
+    <div class="kc ca"><div class="kl">Under Review</div><div class="kv ga" style="font-size:44px;">${s.review}</div><div class="ks">Likely cancellations · ${fmt(Math.round(s.reviewSavings))}/yr</div></div>
+    <div class="kc cgg"><div class="kl">Savings Locked In</div><div class="kv gg" style="font-size:32px;">$157K</div><div class="ks">30 cancelled tools · annualized</div></div>`;
+
+  document.getElementById('total-tools-sub').textContent=`${s.total} total tools in inventory`;
+  document.getElementById('tb-meta').textContent=`${s.active} active · ${s.review} under review · ${cancelled().length} cancelled`;
+
+  // 2026 projection
+  const ai=document.getElementById('proj-active');
+  const ar=document.getElementById('proj-review');
+  const at=document.getElementById('proj-total');
+  if(ai){ai.innerHTML=`<span>Current active spend</span><span>${fmt(Math.round(s.totalAnnual))}</span>`;}
+  if(ar){ar.innerHTML=`<span>Under-review savings</span><span>− ${fmt(Math.round(s.reviewSavings))}</span>`;}
+  if(at){at.innerHTML=`<span>Projected annual cost</span><span style="color:var(--green);">${fmt(Math.round(s.totalAnnual-s.reviewSavings))}</span>`;}
+
+  // Review KPIs
+  const rkEl=document.getElementById('review-kpis');
+  if(rkEl){rkEl.innerHTML=`
+    <div class="kc ca"><div class="kl">Tools Under Review</div><div class="kv ga">${s.review}</div><div class="ks">Being evaluated</div></div>
+    <div class="kc cg"><div class="kl">Potential Annual Savings</div><div class="kv gc">${fmt(Math.round(s.reviewSavings))}</div><div class="ks">If all ${s.review} cancelled</div></div>
+    <div class="kc cb"><div class="kl">Projected After Cancel</div><div class="kv" style="font-size:28px;">${fmt(Math.round(s.totalAnnual-s.reviewSavings))}</div><div class="ks">Revised annual total</div></div>`;}
+}
+
+function bld15(id){
+  const a=actv().filter(t=>t.ta>0).sort((a,b)=>b.ta-a.ta).slice(0,15);
+  if(!a.length)return;
+  const mx=a[0].ta;
+  document.getElementById(id).innerHTML=a.map((t,i)=>`
+    <div class="tl-row" onclick="om(${T.indexOf(t)})">
+      <div class="tl-rk">${i+1}</div>
+      <div><div class="tl-nm">${t.name}</div><div class="tl-dp">${t.dept}</div></div>
+      <div class="tl-bw"><div class="tl-bf" style="width:${(t.ta/mx*100).toFixed(1)}%"></div></div>
+      <div class="tl-amt">${fmt(t.ta)}</div>
+    </div>`).join('');
+}
+
+function bldDept(){
+  const mp={};actv().forEach(t=>{const d=t.dept||'Unassigned';mp[d]=(mp[d]||0)+(+t.ta||0);});
+  const s=Object.entries(mp).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  makeChart('deptC',{type:'bar',
+    data:{labels:s.map(([k])=>k),datasets:[{data:s.map(([,v])=>v),backgroundColor:['#9C7D4E','#B89A60','#7A6040','#C4A870','#5C4830','#4A7A5C','#5C6A7A','#7A5C4A','#5C7A6A','#6A5C7A'],borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.raw)}}},
+      scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{callback:v=>fmt(v),font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+}
+
+function bldBill(){
+  const a=actv();
+  const mo=a.filter(t=>t.ms>0&&!t.as).length;
+  const an=a.filter(t=>t.as>0).length;
+  const fr=a.filter(t=>+t.ta===0).length;
+  const ot=a.length-mo-an-fr;
+  makeChart('billC',{type:'doughnut',
+    data:{labels:['Monthly','Annual','Free / $0','Mixed'],datasets:[{data:[mo,an,fr,ot],backgroundColor:[AMB,GLD,GRN,BLU],borderWidth:2,borderColor:'#FFFFFF',hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:9,font:{size:11}}}}}});
+}
+
+function bldStat(){
+  const a=T.filter(t=>t.st==='active').length,r=T.filter(t=>t.st==='under review').length,c=T.filter(t=>t.st==='cancelled').length;
+  makeChart('statC',{type:'doughnut',
+    data:{labels:['Active','Under Review','Cancelled'],datasets:[{data:[a,r,c],backgroundColor:[GRN,AMB,RED],borderWidth:2,borderColor:'#FFFFFF',hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:9,font:{size:11}}}}}});
+}
+
+function bld15C(){
+  const a=actv().filter(t=>t.ta>0).sort((a,b)=>b.ta-a.ta).slice(0,15);
+  makeChart('t15C',{type:'bar',
+    data:{labels:a.map(t=>t.name.length>16?t.name.substring(0,16)+'…':t.name),datasets:[{data:a.map(t=>t.ta),backgroundColor:GD2,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.raw)}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{callback:v=>fmt(v),font:{size:10}}}}}});
+}
+
+// ============================================================
+// RENEWAL TRACKER
+// ============================================================
+function bkt(t){
+  const d=dU(t.rd);
+  if(d===null)return null;
+  if(d<0)return'ov';if(d<=30)return'd3';if(d<=60)return'd6';if(d<=90)return'd9';if(d<=180)return'd18';return'ok';
+}
+
+function bldRenMini(){
+  const a=actv();const b={ov:[],d3:[],d6:[],d9:[],d18:[]};
+  a.forEach(t=>{const bk=bkt(t);if(bk&&bk!=='ok'&&b[bk])b[bk].push(t);});
+  const cfg=[{k:'ov',e:'🔴',l:'Overdue',c:RED},{k:'d3',e:'🟠',l:'Due ≤ 30 days',c:AMB},{k:'d6',e:'🟡',l:'Due ≤ 60 days',c:'#956800'},{k:'d9',e:'🔵',l:'Due ≤ 90 days',c:BLU},{k:'d18',e:'🟢',l:'Due ≤ 180 days',c:GRN}];
+  const el=document.getElementById('renmini');
+  if(el)el.innerHTML=cfg.map(cf=>`<div class="rm-row"><div style="font-size:12px;display:flex;align-items:center;gap:7px;"><span>${cf.e}</span>${cf.l}</div><span style="font-size:12px;font-weight:600;color:${cf.c};">${fmt(b[cf.k].reduce((s,t)=>s+(+t.ta||0),0))} (${b[cf.k].length})</span></div>`).join('');
+}
+
+function bldRen(){
+  const a=actv();const b={ov:[],d3:[],d6:[],d9:[],d18:[],rv:underReview()};
+  a.forEach(t=>{const bk=bkt(t);if(bk&&bk!=='ok'&&b[bk])b[bk].push(t);});
+  const cfg=[
+    {k:'ov',l:'🔴 OVERDUE — Action required',cl:'ov',tc:'tov'},
+    {k:'d3',l:'🟠 DUE WITHIN 30 DAYS',cl:'d3',tc:'t30'},
+    {k:'d6',l:'🟡 DUE WITHIN 60 DAYS',cl:'d6',tc:'t60'},
+    {k:'d9',l:'🔵 DUE WITHIN 90 DAYS',cl:'d9',tc:'t90'},
+    {k:'d18',l:'🟢 DUE WITHIN 180 DAYS',cl:'d18',tc:'t18'},
+    {k:'rv',l:'🔶 UNDER REVIEW — Likely cancellations',cl:'rv',tc:'trv'}
+  ];
+  const el=document.getElementById('rencont');
+  if(!el)return;
+  el.innerHTML=cfg.map(cf=>{
+    const tools=b[cf.k];if(!tools.length)return'';
+    return`<div class="bkt"><div class="bh ${cf.cl}" onclick="tbkt(this)">
+      <div class="bl">${cf.l}</div>
+      <div class="bm"><span>${tools.length} tool${tools.length>1?'s':''} · ${fmt(tools.reduce((s,t)=>s+(+t.ta||0),0))}</span><span class="bt open">▾</span></div>
+    </div>
+    <div class="bb open">${tools.map(t=>`<div class="br" onclick="om(${T.indexOf(t)})">
+      <div><div class="bn">${t.name}</div><div class="bd">${t.dept}</div></div>
+      <div class="bdt">${t.rd?t.rd.split(' ')[0]:'—'}</div>
+      <div class="bc">${fmt(t.ta)}</div>
+      <div><span class="dt ${cf.tc}">${(()=>{const d=dU(t.rd);return d===null?'No date':d<0?Math.abs(d)+'d over':d+'d left';})()}</span></div>
+    </div>`).join('')}</div></div>`;
+  }).join('');
+}
+function tbkt(h){const b=h.nextElementSibling,a=h.querySelector('.bt');b.classList.toggle('open');a.classList.toggle('open');}
+
+// ============================================================
+// ALL TOOLS / FILTER
+// ============================================================
+function bldDF(){
+  const dp=[...new Set(T.map(t=>t.dept).filter(Boolean))].sort();
+  const sel=document.getElementById('tdept');
+  if(!sel)return;
+  sel.innerHTML='<option value="">All Departments</option>';
+  dp.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+}
+
+function filt(){
+  const q=(document.getElementById('tsrch')?.value||'').toLowerCase();
+  const st=document.getElementById('tstat')?.value||'';
+  const dp=document.getElementById('tdept')?.value||'';
+  const f=T.filter(t=>{
+    if(!t.name)return false;
+    const mq=!q||[t.name,t.dept,t.adm,t.def,t.tu,t.notes,t.ai].some(v=>v&&v.toLowerCase().includes(q));
+    return mq&&(!st||t.st===st)&&(!dp||t.dept===dp);
+  });
+  rndCards(f,'tgrid');
+}
+
+function rndCards(tools,cid){
+  const el=document.getElementById(cid);if(!el)return;
+  if(!tools.length){el.innerHTML='<div class="empty">No tools found.</div>';return;}
+  el.innerHTML=tools.map(t=>{
+    const idx=T.indexOf(t);
+    const sc=t.st==='active'?'pa':t.st==='under review'?'pr':'pc';
+    const billing=t.ms>0?fmt2(+t.ms)+'/mo':t.as>0?fmt2(+t.as)+'/yr':'Free';
+    const ren=t.rd&&!['No','Free','free','charge'].some(x=>t.rd.toLowerCase().includes(x))?t.rd.split('T')[0]:'—';
+    const isRev=t.st==='under review';
+    return`<div class="tc">
+      <div class="tc-head">
+        <div class="tc-head-top">
+          <div class="tc-nm" onclick="om(${idx})">${t.name}</div>
+          <span class="pill ${sc}">${t.st}</span>
+        </div>
+        ${t.def?`<div class="tc-def">${t.def.substring(0,90)}${t.def.length>90?'…':''}</div>`:''}
+      </div>
+      <div class="tc-body">
+        <div class="tc-row"><span class="tc-lb">Annual Cost</span><span class="tc-vl gv">${fmt(+t.ta)}</span></div>
+        <div class="tc-row"><span class="tc-lb">Billing</span><span class="tc-vl">${billing}</span></div>
+        <div class="tc-row"><span class="tc-lb">Admin / Owner</span><span class="tc-vl">${t.adm||'—'}</span></div>
+        <div class="tc-row"><span class="tc-lb">Licenses</span><span class="tc-vl">${t.lic||'—'}</span></div>
+        <div class="tc-row"><span class="tc-lb">Contract</span><span class="tc-vl">${t.ct||'—'}</span></div>
+        <div class="tc-row"><span class="tc-lb">Cancellation</span><span class="tc-vl">${t.cant||'—'}</span></div>
+        <div class="tc-row"><span class="tc-lb">Renewal</span><span class="tc-vl">${ren}</span></div>
+        ${t.tu?`<div class="tc-row" style="align-items:flex-start;"><span class="tc-lb">Users</span><span class="tc-vl" style="font-size:11px;color:var(--tm);max-width:170px;text-align:right;line-height:1.3;">${t.tu.substring(0,80)}${t.tu.length>80?'…':''}</span></div>`:''}
+        ${t.notes?`<div class="tc-row" style="align-items:flex-start;"><span class="tc-lb">Notes</span><span class="tc-vl" style="font-size:11px;color:${t.notes.toLowerCase().includes('cancel')||t.notes.toLowerCase().includes('no user')?'var(--red)':'var(--tm)'};max-width:170px;text-align:right;line-height:1.3;">${t.notes.substring(0,70)}${t.notes.length>70?'…':''}</span></div>`:''}
+      </div>
+      <div class="tc-foot">
+        <span class="tc-dept">${t.dept}</span>
+        <div class="tc-actions">
+          ${t.box?`<a class="box-link-btn" href="${t.box}" target="_blank">📦 Box</a>`:''}
+          ${isRev?`<button class="btn-cancel-tool" onclick="quickCancel(${idx})">Cancel</button><button class="btn-keep-tool" onclick="om(${idx})">Keep</button>`:''}
+          <button class="btn-edit" onclick="om(${idx},true)">Edit</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// DEPARTMENTS
+// ============================================================
+function bldDepts(){
+  const mp={};actv().forEach(t=>{const d=t.dept||'Unassigned';if(!mp[d])mp[d]={tools:[],total:0};mp[d].tools.push(t);mp[d].total+=(+t.ta||0);});
+  const s=Object.entries(mp).sort((a,b)=>b[1].total-a[1].total);
+  if(!s.length)return;
+  const mx=s[0][1].total;
+  const el=document.getElementById('dgrid');if(!el)return;
+  el.innerHTML=s.map(([dept,data])=>`
+    <div class="dc" onclick="showDD('${dept.replace(/'/g,"\\'")}')">
+      <div class="dn">${dept}</div><div class="dct">${data.tools.length} active tool${data.tools.length!==1?'s':''}</div>
+      <div class="da">${fmt(data.total)}</div>
+      <div class="dbg"><div class="dbf" style="width:${(data.total/mx*100).toFixed(1)}%"></div></div>
+      <div class="dp">${data.tools.slice(0,4).map(t=>t.name).join(' · ')}${data.tools.length>4?` +${data.tools.length-4} more`:''}</div>
+    </div>`).join('');
+}
+
+function showDD(dept){
+  const tools=T.filter(t=>t.st==='active'&&t.dept===dept);
+  const det=document.getElementById('ddet');det.style.display='block';
+  det.innerHTML=`<div class="card"><div class="ct">${dept} — All Active Tools</div><div class="cs">${tools.length} tools · ${fmt(tools.reduce((s,t)=>s+(+t.ta||0),0))} total annual spend</div><div class="tg" id="ddinner"></div></div>`;
+  rndCards(tools,'ddinner');
+  det.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ============================================================
+// REVIEW TABLE
+// ============================================================
+function bldRevTbl(){
+  const tools=underReview().sort((a,b)=>b.ta-a.ta);
+  const el=document.getElementById('revtbl');if(!el)return;
+  const isC=t=>t.notes.toLowerCase().includes('cancel')||t.notes.toLowerCase().includes('good to cancel')||t.notes.toLowerCase().includes('stop charge');
+  el.innerHTML=`<thead><tr>
+    <th>Tool</th><th>Department</th><th>Billing</th>
+    <th style="text-align:right;">Annual Cost</th><th style="text-align:center;">Actions</th>
+  </tr></thead>
+  <tbody>${tools.map(t=>`<tr>
+    <td style="font-weight:500;cursor:pointer;" onclick="om(${T.indexOf(t)})">${t.name}</td>
+    <td style="color:var(--tm)">${t.dept||'—'}</td>
+    <td style="color:var(--tm)">${t.bt||'—'}</td>
+    <td style="text-align:right;font-weight:600;color:var(--gold);">${fmt(t.ta)}</td>
+    <td style="text-align:center;">
+      <div class="review-actions">
+        <button class="btn-cancel-tool" onclick="quickCancel(${T.indexOf(t)})">❌ Cancel</button>
+        <button class="btn-keep-tool" onclick="om(${T.indexOf(t)},true)">✅ Keep / Edit</button>
+      </div>
+    </td>
+  </tr>`).join('')}</tbody>`;
+}
+
+// ============================================================
+// QUICK CANCEL (from card or review table)
+// ============================================================
+function quickCancel(idx){
+  const t=T[idx];
+  openConfirm(
+    `Cancel ${t.name}?`,
+    `This will mark the tool as cancelled and remove it from active renewal tracking. This action can be undone by editing the tool.`,
+    ()=>{
+      T[idx].st='cancelled';
+      T[idx].cd=new Date().toISOString().split('T')[0];
+      saveData();
+      refreshAll();
+      showToast(`${t.name} marked as cancelled`,'red');    }
+  );
+}
+
+// ============================================================
+// MODAL — VIEW / EDIT
+// ============================================================
+let currentIdx=-1;
+let editMode=false;
+
+function om(idx,startEdit=false){
+  currentIdx=idx;
+  editMode=startEdit;
+  renderModal();
+  document.getElementById('mover').classList.add('open');
+  if(startEdit)showEditForm();else showViewMode();
+}
+
+function renderModal(){
+  if(currentIdx<0)return;
+  const t=T[currentIdx];
+  document.getElementById('mtit').textContent=t.name;
+  const sc=t.st==='active'?'pa':t.st==='under review'?'pr':'pc';
+  document.getElementById('mstat').innerHTML=`<span class="pill ${sc}">${t.st}</span> <span style="margin-left:8px;font-size:12px;color:var(--tm);">${t.dept}</span>`;
+  document.getElementById('editToggleBtn').textContent=editMode?'👁 View':'✏️ Edit';
+
+  const days=dU(t.rd);
+  const dtag=days!==null?`<span style="margin-left:7px;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;${days<0?'background:var(--rbg);color:var(--red)':days<=30?'background:var(--abg);color:var(--amber)':'background:var(--gbg);color:var(--green)'}">${days<0?Math.abs(days)+'d overdue':days+'d left'}</span>`:'';
+
+  const viewHTML=`<div class="vview" id="modal-view">
+    ${t.def?`<div class="mdf">${t.def}</div>`:''}
+    ${t.st==='under review'?`<div class="rev-action-box"><h4>⚠️ Review Decision Required</h4>
+      <div class="rev-action-btns">
+        <button class="btn-confirm-cancel" onclick="quickCancel(${currentIdx});closeMB()">❌ Cancel This Tool</button>
+        <button class="btn-confirm-keep" onclick="showEditForm()">✅ Keep &amp; Update Details</button>
+      </div></div>`:''}
+    <div class="ms">Cost & Billing</div>
+    <div class="mg">
+      <div class="mf"><div class="ml">Total Annual Cost</div><div class="mv gv">${fmt2(+t.ta)}</div></div>
+      <div class="mf"><div class="ml">Monthly Subscription</div><div class="mv">${t.ms>0?fmt2(+t.ms)+'/mo':'—'}</div></div>
+      <div class="mf"><div class="ml">Annual Subscription</div><div class="mv">${t.as>0?fmt2(+t.as):+t.ta===0?'Free / No charge':'—'}</div></div>
+      <div class="mf"><div class="ml">Contract Terms</div><div class="mv">${t.ct||'—'}</div></div>
+      <div class="mf"><div class="ml">Billing Terms</div><div class="mv">${t.bt||'—'}</div></div>
+      <div class="mf"><div class="ml">Cancellation Terms</div><div class="mv">${t.cant||'—'}</div></div>
+    </div>
+    <div class="ms">Dates & Renewal</div>
+    <div class="mg">
+      <div class="mf"><div class="ml">Renewal Date</div><div class="mv">${t.rd?t.rd.split('T')[0]:'—'} ${dtag}</div></div>
+      <div class="mf"><div class="ml">Start Date</div><div class="mv">${t.sd?t.sd.split('T')[0]:'—'}</div></div>
+      ${t.cd?`<div class="mf"><div class="ml">Cancellation Date</div><div class="mv" style="color:var(--red);">${t.cd.split('T')[0]}</div></div>`:''}
+    </div>
+    <div class="ms">Access & Ownership</div>
+    <div class="mg">
+      <div class="mf"><div class="ml">Admin / Owner</div><div class="mv">${t.adm||'—'}</div></div>
+      <div class="mf"><div class="ml">Licenses / Seats</div><div class="mv">${t.lic||'—'}</div></div>
+      <div class="mf"><div class="ml">Internal / External</div><div class="mv">${t.ie||'—'}</div></div>
+      <div class="mf"><div class="ml">Department</div><div class="mv">${t.dept||'—'}</div></div>
+    </div>
+    ${t.tu?`<div class="ms">Tool Users</div><div class="mn">${t.tu}</div>`:''}
+    ${t.int?`<div class="ms">Integrations</div><div class="mn">${t.int}</div>`:''}
+    ${t.sn?`<div class="ms">Security Notes</div><div class="mn">${t.sn}</div>`:''}
+    ${t.box?`<div class="ms">📦 Box Contract Link</div><div class="mn box-link"><a class="box-link-text" href="${t.box}" target="_blank">🔗 ${t.box}</a></div>`:''}
+    ${t.notes?`<div class="ms">Notes</div><div class="mn ${t.notes.toLowerCase().includes('cancel')||t.notes.toLowerCase().includes('no user')?'wn':''}">${t.notes}</div>`:''}
+    ${t.ai?`<div class="ms">AI Recommendation</div><div class="mn ai">💡 ${t.ai}</div>`:''}
+  </div>`;
+
+  const editHTML=`<div class="eform" id="modal-edit">
+    <div class="ef-grid">
+      <div class="ef-group"><label>Tool Name</label><input id="e-name" value="${esc(t.name)}"></div>
+      <div class="ef-group"><label>Status</label>
+        <select id="e-st">
+          <option value="active" ${t.st==='active'?'selected':''}>Active</option>
+          <option value="under review" ${t.st==='under review'?'selected':''}>Under Review</option>
+          <option value="cancelled" ${t.st==='cancelled'?'selected':''}>Cancelled</option>
+        </select>
+      </div>
+      <div class="ef-group ef-full"><label>Definition / Description</label><textarea id="e-def" rows="2">${esc(t.def)}</textarea></div>
+      <div class="ef-group"><label>Department</label>
+        <select id="e-dept">
+          ${['Accounting','All Departments','Creative','Data','Digital','Donor Advancement','HR','Major Gift','Marketing','Media','Multi','Operations','Ops','Other','Unassigned'].map(d=>`<option ${t.dept===d?'selected':''}>${d}</option>`).join('')}
+        </select>
+      </div>
+      <div class="ef-group"><label>Admin / Owner</label><input id="e-adm" value="${esc(t.adm)}"></div>
+      <div class="ef-group"><label>Monthly Subscription ($)</label><input id="e-ms" type="number" step="0.01" value="${t.ms||''}"></div>
+      <div class="ef-group"><label>Annual Subscription ($)</label><input id="e-as" type="number" step="0.01" value="${t.as||''}"></div>
+      <div class="ef-group"><label>Total Annual Amount ($)</label><input id="e-ta" type="number" step="0.01" value="${t.ta||''}"></div>
+      <div class="ef-group"><label>Contract Terms</label><input id="e-ct" value="${esc(t.ct)}"></div>
+      <div class="ef-group"><label>Billing Terms</label><input id="e-bt" value="${esc(t.bt)}"></div>
+      <div class="ef-group"><label>Cancellation Terms</label><input id="e-cant" value="${esc(t.cant)}"></div>
+      <div class="ef-group"><label>Start Date <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">(YYYY-MM-DD or pick)</span></label><div class="date-dual"><input id="e-sd" type="text" placeholder="e.g. 2026-09-01" value="${t.sd?t.sd.split('T')[0]:''}" oninput="syncDatePicker('e-sd','e-sd-pick')"><input id="e-sd-pick" type="date" title="Pick date" value="${t.sd?t.sd.split('T')[0]:''}" onchange="syncDateText('e-sd-pick','e-sd')"></div></div>
+      <div class="ef-group"><label>Renewal Date <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">(YYYY-MM-DD or pick)</span></label><div class="date-dual"><input id="e-rd" type="text" placeholder="e.g. 2027-01-15" value="${t.rd&&t.rd.match(/^\d{4}/)?t.rd.split('T')[0]:''}" oninput="syncDatePicker('e-rd','e-rd-pick')"><input id="e-rd-pick" type="date" title="Pick date" value="${t.rd&&t.rd.match(/^\d{4}/)?t.rd.split('T')[0]:''}" onchange="syncDateText('e-rd-pick','e-rd')"></div></div>
+      <div class="ef-group"><label>Cancellation Date <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">(YYYY-MM-DD or pick)</span></label><div class="date-dual"><input id="e-cd" type="text" placeholder="e.g. 2026-03-01" value="${t.cd?t.cd.split('T')[0]:''}" oninput="syncDatePicker('e-cd','e-cd-pick')"><input id="e-cd-pick" type="date" title="Pick date" value="${t.cd?t.cd.split('T')[0]:''}" onchange="syncDateText('e-cd-pick','e-cd')"></div></div>
+      <div class="ef-group"><label>Licenses / Seats</label><input id="e-lic" value="${esc(t.lic)}"></div>
+      <div class="ef-group"><label>Internal / External</label><input id="e-ie" value="${esc(t.ie)}"></div>
+      <div class="ef-group ef-full"><label>Tool Users</label><input id="e-tu" value="${esc(t.tu)}"></div>
+      <div class="ef-group ef-full"><label>📦 Box Contract Link</label><input id="e-box" value="${esc(t.box||'')}" placeholder="https://dunham.box.com/..."></div>
+      <div class="ef-group ef-full"><label>Integrations</label><input id="e-int" value="${esc(t.int)}"></div>
+      <div class="ef-group ef-full"><label>Security Notes</label><input id="e-sn" value="${esc(t.sn)}"></div>
+      <div class="ef-group ef-full"><label>AI Recommendation</label><input id="e-ai" value="${esc(t.ai)}"></div>
+      <div class="ef-group ef-full"><label>Notes</label><textarea id="e-notes" rows="3">${esc(t.notes)}</textarea></div>
+    </div>
+    <div class="ef-actions">
+      <button class="ef-save" onclick="saveEdit()">💾 Save Changes</button>
+      <button class="ef-cancel" onclick="showViewMode()">Cancel</button>
+    </div>
+  </div>`;
+
+  document.getElementById('mbody').innerHTML=viewHTML+editHTML;
+}
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function showEditForm(){
+  editMode=true;
+  document.getElementById('editToggleBtn').textContent='👁 View';
+  const v=document.getElementById('modal-view');
+  const e=document.getElementById('modal-edit');
+  if(v)v.style.display='none';
+  if(e)e.style.display='block';
+}
+
+function showViewMode(){
+  editMode=false;
+  document.getElementById('editToggleBtn').textContent='✏️ Edit';
+  const v=document.getElementById('modal-view');
+  const e=document.getElementById('modal-edit');
+  if(v)v.style.display='block';
+  if(e)e.style.display='none';
+}
+
+function toggleEdit(){
+  if(editMode)showViewMode();else showEditForm();
+}
+
+function saveEdit(){
+  if(currentIdx<0)return;
+  const t=T[currentIdx];
+  t.name=document.getElementById('e-name').value.trim()||t.name;
+  t.st=document.getElementById('e-st').value;
+  t.def=document.getElementById('e-def').value.trim();
+  t.dept=document.getElementById('e-dept').value;
+  t.adm=document.getElementById('e-adm').value.trim();
+  t.ms=parseFloat(document.getElementById('e-ms').value)||0;
+  t.as=parseFloat(document.getElementById('e-as').value)||0;
+  t.ta=parseFloat(document.getElementById('e-ta').value)||0;
+  t.ct=document.getElementById('e-ct').value.trim();
+  t.bt=document.getElementById('e-bt').value.trim();
+  t.cant=document.getElementById('e-cant').value.trim();
+  t.sd=document.getElementById('e-sd').value;
+  t.rd=document.getElementById('e-rd').value;
+  t.cd=document.getElementById('e-cd').value;
+  t.lic=document.getElementById('e-lic').value.trim();
+  t.ie=document.getElementById('e-ie').value.trim();
+  t.tu=document.getElementById('e-tu').value.trim();
+  t.box=document.getElementById('e-box').value.trim();
+  t.int=document.getElementById('e-int').value.trim();
+  t.sn=document.getElementById('e-sn').value.trim();
+  t.ai=document.getElementById('e-ai').value.trim();
+  t.notes=document.getElementById('e-notes').value.trim();
+
+  showToast(`${t.name} saved successfully`,'green');
+  saveData();
+  closeMB();
+  refreshAll();
+}
+
+// ============================================================
+// ADD NEW TOOL
+// ============================================================
+function openAddTool(){document.getElementById('add-modal').classList.add('open');}
+function closeAddTool(){document.getElementById('add-modal').classList.remove('open');}
+function closeAddIfBg(e){if(e.target===document.getElementById('add-modal'))closeAddTool();}
+
+function saveNewTool(){
+  const name=document.getElementById('an-name').value.trim();
+  if(!name){alert('Tool name is required.');return;}
+  const newTool={
+    name, def:document.getElementById('an-def').value.trim(),
+    sd:document.getElementById('an-sd').value, rd:document.getElementById('an-rd').value, cd:'',
+    st:document.getElementById('an-st').value,
+    ct:document.getElementById('an-ct').value.trim(), bt:document.getElementById('an-bt').value.trim(),
+    cant:document.getElementById('an-cant').value.trim(),
+    ms:parseFloat(document.getElementById('an-ms').value)||0,
+    as:parseFloat(document.getElementById('an-as').value)||0,
+    ta:parseFloat(document.getElementById('an-ta').value)||0,
+    ie:document.getElementById('an-ie').value.trim(),
+    dept:document.getElementById('an-dept').value, adm:document.getElementById('an-adm').value.trim(),
+    lic:document.getElementById('an-lic').value.trim(), cp:'', sn:'',
+    int:document.getElementById('an-int').value.trim(),
+    tu:document.getElementById('an-tu').value.trim(),
+    ai:document.getElementById('an-ai').value.trim(),
+    notes:document.getElementById('an-notes').value.trim(),
+    box:document.getElementById('an-box').value.trim()
+  };
+  T.push(newTool);
+  closeAddTool();
+  // Reset form
+  ['an-name','an-def','an-sd','an-rd','an-ct','an-bt','an-cant','an-ms','an-as','an-ta','an-ie','an-adm','an-lic','an-int','an-tu','an-ai','an-notes','an-box'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  showToast(`${newTool.name} added to tracker`,'green');
+  saveData();
+  refreshAll();
+}
+
+// ============================================================
+// CONFIRM DIALOG
+// ============================================================
+let confirmCallback=null;
+function openConfirm(title,msg,cb){
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  confirmCallback=cb;
+  document.getElementById('confirm-yes').onclick=()=>{if(confirmCallback)confirmCallback();closeConfirm();};
+  document.getElementById('confirm-mo').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirm-mo').classList.remove('open');}
+
+// ============================================================
+// MODAL CLOSE
+// ============================================================
+function closeMO(e){if(e.target===document.getElementById('mover'))closeMB();}
+function closeMB(){document.getElementById('mover').classList.remove('open');currentIdx=-1;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMB();closeAddTool();closeConfirm();}});
+
+// ============================================================
+// NAV
+// ============================================================
+const PTITLES={summary:'Executive Summary',alltools:'All Tools',departments:'By Department',top15:'Top 15 Tools',review:'Under Review',renewals:'Renewal Tracker',s2025:'2025 — Cancelled & Saved',s2026:'2026 — Year to Date'};
+function nav(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('pt').textContent=PTITLES[id]||id;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='departments'){const dd=document.getElementById('ddet');if(dd)dd.style.display='none';}
+}
+
+// ============================================================
+// 2026 YTD — fully dynamic
+// ============================================================
+function bld2026(){
+  const SAVINGS_2025 = 151743;
+
+  // Cancelled in 2026 — tools with st=cancelled and cd starting with 2026
+  const cancelled2026 = T.filter(t => t.st === 'cancelled' && t.cd && t.cd.startsWith('2026'));
+  const savings2026 = cancelled2026.reduce((s,t) => s + (+t.ta||0), 0);
+  const combined = SAVINGS_2025 + savings2026;
+
+  // New tools added in 2026 — active tools with sd starting with 2026
+  const added2026 = T.filter(t => t.st === 'active' && t.sd && t.sd.startsWith('2026'));
+  const addedCost = added2026.reduce((s,t) => s + (+t.ta||0), 0);
+
+  // Under review potential savings
+  const reviewSavings = underReview().reduce((s,t) => s + (+t.ta||0), 0);
+  const activeCost = actv().reduce((s,t) => s + (+t.ta||0), 0);
+
+  // KPIs
+  const kpis = document.getElementById('ytd-kpis');
+  if(kpis) kpis.innerHTML = `
+    <div class="kc cg"><div class="kl">Tools Cancelled YTD</div><div class="kv">${cancelled2026.length}</div><div class="ks">2026 year to date</div></div>
+    <div class="kc cgg"><div class="kl">2026 Savings So Far</div><div class="kv gg">${fmt(savings2026)}</div><div class="ks">YTD</div></div>
+    <div class="kc cb"><div class="kl">Combined 2025+2026</div><div class="kv" style="font-size:28px;">${fmt(combined)}</div><div class="ks">Total eliminated</div></div>`;
+
+  // Cancelled table
+  const sub = document.getElementById('ytd-cancelled-sub');
+  if(sub) sub.textContent = `${cancelled2026.length} tool${cancelled2026.length!==1?'s':''} removed · ${fmt(savings2026)} saved`;
+  const tbody = document.getElementById('ytd-cancelled-body');
+  if(tbody) tbody.innerHTML = cancelled2026.length ? cancelled2026.map(t => {
+    const cdFmt = t.cd ? new Date(t.cd).toLocaleDateString('en-US',{month:'short',year:'numeric'}) : '—';
+    return `<tr><td>${t.name}</td><td style="color:var(--tm)">${cdFmt}</td><td class="sn">${fmt(t.ta)}</td></tr>`;
+  }).join('') + `<tr class="stot"><td colspan="2">Total 2026 savings</td><td class="sn" style="color:var(--green);">${fmt(savings2026)}</td></tr>`
+  : `<tr><td colspan="3" class="empty">No tools cancelled in 2026 yet</td></tr>`;
+
+  // Two-year summary rows
+  const row2026 = document.getElementById('ytd-2026-row');
+  if(row2026) row2026.innerHTML = `<span>2026 cancelled (${cancelled2026.length} tool${cancelled2026.length!==1?'s':''})</span><span style="color:var(--green);font-weight:600;">${fmt(savings2026)}</span>`;
+  const rowTotal = document.getElementById('ytd-total-row');
+  if(rowTotal) rowTotal.innerHTML = `<span>Total eliminated</span><span style="color:var(--green);">${fmt(combined)}</span>`;
+
+  // Projections
+  const pa = document.getElementById('proj-active');
+  const pr = document.getElementById('proj-review');
+  const pt = document.getElementById('proj-total');
+  if(pa) pa.innerHTML = `<span>Current active spend</span><span>${fmt(activeCost)}/yr</span>`;
+  if(pr) pr.innerHTML = `<span>Under review (potential cut)</span><span>−${fmt(reviewSavings)}/yr</span>`;
+  if(pt) pt.innerHTML = `<span>Potential new annual spend</span><span style="color:var(--green);">${fmt(activeCost - reviewSavings)}/yr</span>`;
+
+  // New tools added table
+  const addSub = document.getElementById('ytd-added-sub');
+  if(addSub) addSub.textContent = `${added2026.length} tool${added2026.length!==1?'s':''} · ${fmt(addedCost)} total acquisition cost`;
+  const addBody = document.getElementById('ytd-added-body');
+  if(addBody) addBody.innerHTML = added2026.length ? added2026.map(t => {
+    const sdFmt = t.sd ? new Date(t.sd).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    return `<tr><td>${t.name}</td><td style="color:var(--tm)">${sdFmt}</td><td style="color:var(--tm)">${t.dept||'—'}</td><td style="text-align:right;font-weight:600;color:var(--gold);">${fmt(t.ta)}</td></tr>`;
+  }).join('')
+  : `<tr><td colspan="4" class="empty">No new tools added in 2026 yet</td></tr>`;
+}
+
+function refreshAll(){
+  renderSummary();
+  bld15('t15s');bld15('t15p');
+  bldDept();bldBill();bldStat();bld15C();
+  bldRenMini();bldRen();
+  bldDF();filt();
+  bldDepts();bldRevTbl();
+  bld2026();
+}
+
+// ============================================================
+// PERSISTENCE — Cloudflare KV via Pages Functions API
+// ============================================================
+const STORAGE_KEY = 'dc_techstack_v1';
+
+function setSavedStatus(msg, color){
+  const el = document.getElementById('sb-saved');
+  if(el){ el.textContent = msg; el.style.color = color || 'var(--smuted)'; }
+}
+
+async function saveData(){
+  try{
+    setSavedStatus('Saving…', 'var(--gold)');
+    const res = await fetch('/api/data', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ key: STORAGE_KEY, value: T })
+    });
+    if(res.ok){
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      setSavedStatus('✓ Saved ' + timeStr, 'var(--green)');
+      console.log('KV saved:', T.length, 'tools at', timeStr);
+    } else {
+      const errText = await res.text().catch(()=>'');
+      console.error('KV save failed HTTP', res.status, errText);
+      setSavedStatus('Save failed', 'var(--red)');
+      showToast('Could not save — please try again', 'red');
+    }
+  } catch(e){
+    console.error('saveData error:', e);
+    setSavedStatus('Offline?', 'var(--red)');
+    showToast('Save error — check connection', 'red');
+  }
+}
+
+async function loadData(){
+  try{
+    setSavedStatus('Loading…', 'var(--gold)');
+    const res = await fetch('/api/data?key=' + STORAGE_KEY);
+    if(!res.ok){
+      console.warn('KV load failed, HTTP', res.status);
+      setSavedStatus('Load failed', 'var(--red)');
+      return false;
+    }
+    const json = await res.json();
+    if(json.value && Array.isArray(json.value) && json.value.length > 0){
+      T = json.value;
+      setSavedStatus('✓ Up to date', 'var(--green)');
+      console.log('KV loaded:', T.length, 'tools');
+      return true;
+    }
+    // KV returned null/empty — use hardcoded defaults, then save them to KV
+    console.log('KV empty — using defaults, pushing to KV');
+    setSavedStatus('Initialising…', 'var(--gold)');
+    await saveData();
+    return false;
+  } catch(e){
+    console.error('loadData error:', e);
+    setSavedStatus('Offline?', 'var(--red)');
+  }
+  return false;
+}
+
+// ============================================================
+// DATE SYNC — keeps text field and calendar picker in sync
+// ============================================================
+function syncDatePicker(textId, pickId){
+  const txt=document.getElementById(textId);
+  const pick=document.getElementById(pickId);
+  if(!txt||!pick)return;
+  const val=txt.value.trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val)){pick.value=val;}
+}
+function syncDateText(pickId, textId){
+  const txt=document.getElementById(textId);
+  const pick=document.getElementById(pickId);
+  if(!txt||!pick)return;
+  txt.value=pick.value;
+}
+
+// ============================================================
+// INIT — called after password unlock, loads KV then renders
+// ============================================================
+window._appReady = false;
+async function initApp(){
+  if(window._appReady) return;
+  window._appReady = true;
+  await loadData();
+  refreshAll();
+}
+</script>
+
+</div><!-- /app-shell -->
+
+<!-- ======= PASSWORD LOGIC ======= -->
+<script>
+(function(){
+  // ── SET YOUR PASSWORD HERE ──────────────────────────────────
+  const CORRECT = 'jtkYtlXhAqrt2yP';
+  // ───────────────────────────────────────────────────────────
+
+  const SESSION_KEY = 'dc_tech_unlocked';
+
+  function unlock(){
+    sessionStorage.setItem(SESSION_KEY,'1');
+    const gate = document.getElementById('pw-gate');
+    const app  = document.getElementById('app-shell');
+    gate.classList.add('unlocked');
+    setTimeout(()=>{
+      gate.style.display='none';
+      app.style.display='flex';
+      app.style.width='100%';
+      initApp();
+    },380);
+  }
+
+  // If already unlocked this session, skip gate
+  if(sessionStorage.getItem(SESSION_KEY)==='1'){
+    document.getElementById('pw-gate').style.display='none';
+    const app=document.getElementById('app-shell');
+    app.style.display='flex';
+    app.style.width='100%';
+    initApp();
+    return;
+  }
+
+  // Focus input on load
+  window.addEventListener('DOMContentLoaded',()=>{
+    const inp=document.getElementById('pw-input');
+    if(inp) setTimeout(()=>inp.focus(),100);
+  });
+
+  window.checkPW = function(){
+    const val = (document.getElementById('pw-input').value||'').trim();
+    if(val === CORRECT){
+      unlock();
+    } else {
+      const inp = document.getElementById('pw-input');
+      const err = document.getElementById('pw-error');
+      inp.classList.remove('shake');
+      void inp.offsetWidth; // trigger reflow for re-animation
+      inp.classList.add('shake');
+      inp.value='';
+      err.textContent='Incorrect password. Please try again.';
+      setTimeout(()=>{ err.textContent=''; inp.classList.remove('shake'); },3000);
+      inp.focus();
+    }
+  };
+})();
+</script>
+
+</body>
+</html>
