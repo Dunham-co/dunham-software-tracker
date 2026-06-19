@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -310,6 +310,52 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
 .box-link-btn{background:var(--bbg);color:var(--blue);border:1px solid #C5D9F5;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none;letter-spacing:.04em;}
 .box-link-btn:hover{background:var(--blue);color:#fff;}
 
+/* ALL TOOLS SPREADSHEET */
+.atbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.at-toggle{display:flex;background:var(--cream3);border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+.at-toggle button{background:none;border:none;padding:7px 14px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--tm);cursor:pointer;transition:all .15s;}
+.at-toggle button.active{background:var(--gold);color:#fff;}
+.amt-filter{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--td);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;cursor:pointer;}
+.at-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.at-tbl thead tr{background:var(--cream3);border-bottom:2px solid var(--border);}
+.at-tbl thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tm);white-space:nowrap;cursor:pointer;user-select:none;}
+.at-tbl thead th:hover{color:var(--gold);}
+.at-tbl thead th.sorted{color:var(--gold);}
+.at-tbl tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer;}
+.at-tbl tbody tr:hover{background:var(--cream);}
+.at-tbl tbody tr:last-child{border-bottom:none;}
+.at-tbl td{padding:9px 12px;vertical-align:top;}
+.at-nm{font-weight:600;color:var(--td);font-size:13px;}
+.at-dept{font-size:11px;color:var(--tm);margin-top:2px;}
+.at-bc{font-size:11px;color:var(--tm);line-height:1.4;max-width:260px;}
+.at-cost{font-weight:600;color:var(--gold);white-space:nowrap;}
+.at-cost.red{color:var(--red);}
+.at-ren{font-size:11px;color:var(--tm);white-space:nowrap;}
+.at-ren.overdue{color:var(--red);font-weight:600;}
+.at-ren.soon{color:var(--amber);font-weight:600;}
+.at-adm{font-size:11px;color:var(--tm);}
+.at-acts{display:flex;gap:5px;white-space:nowrap;}
+.at-tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--cborder);background:var(--card);}
+.sort-arrow{margin-left:3px;opacity:.5;}
+
+/* COLUMN VISIBILITY DROPDOWN */
+.col-vis-wrap{position:relative;}
+.col-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--cborder);border-radius:10px;padding:10px 0;min-width:190px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.12);}
+.col-menu.open{display:block;}
+.col-menu-title{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tm);padding:4px 14px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.col-item{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:12px;color:var(--td);cursor:pointer;transition:background .1s;}
+.col-item:hover{background:var(--cream);}
+.col-item input[type=checkbox]{accent-color:var(--gold);width:14px;height:14px;cursor:pointer;}
+
+/* FILTER TOTALS BAR */
+.filter-totals{display:flex;gap:24px;align-items:center;padding:10px 16px;background:var(--cream3);border:1px solid var(--border);border-radius:0 0 10px 10px;border-top:none;font-size:12px;flex-wrap:wrap;}
+.ft-item{display:flex;align-items:center;gap:6px;color:var(--tm);}
+.ft-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;}
+.ft-val{font-weight:700;color:var(--td);}
+.ft-val.gold{color:var(--gold);}
+.ft-val.green{color:var(--green);}
+.ft-divider{width:1px;height:16px;background:var(--border);}
+
 /* BUCKET / RENEWAL */
 .bkt{background:var(--card);border:1px solid var(--cborder);border-radius:10px;overflow:hidden;margin-bottom:13px;}
 .bh{padding:12px 17px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
@@ -576,18 +622,68 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
 
   <!-- ALL TOOLS -->
   <div id="sec-alltools" class="sec">
-    <div class="tbar">
-      <input class="si" id="tsrch" placeholder="Search by name, department, admin, users…" oninput="filt()">
-      <select class="fs" id="tstat" onchange="filt()">
+    <div class="atbar">
+      <input class="si" id="tsrch" placeholder="Search by name, department, business case, notes…" oninput="filt()" style="flex:1;min-width:200px;">
+      <select class="fs amt-filter" id="tstat" onchange="filt()">
         <option value="">All Statuses</option><option value="active">Active</option>
         <option value="under review">Under Review</option><option value="cancelled">Cancelled</option>
       </select>
-      <select class="fs" id="tdept" onchange="filt()"><option value="">All Departments</option></select>
+      <select class="fs amt-filter" id="tdept" onchange="filt()"><option value="">All Departments</option></select>
+      <select class="fs amt-filter" id="tamt" onchange="filt()">
+        <option value="">All Amounts</option>
+        <option value="0-1000">Under $1K</option>
+        <option value="1000-10000">$1K – $10K</option>
+        <option value="10000-50000">$10K – $50K</option>
+        <option value="50000+">$50K+</option>
+      </select>
+      <div class="col-vis-wrap" id="colVisWrap">
+        <button class="fs amt-filter" onclick="toggleColMenu(event)" style="cursor:pointer;">⚙ Columns</button>
+        <div class="col-menu" id="colMenu">
+          <div class="col-menu-title">Show / Hide Columns</div>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('dept',this)"> Department</label>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('st',this)"> Status</label>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('bc',this)"> Business Case</label>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('cost',this)"> Cost</label>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('rd',this)"> Renewal</label>
+          <label class="col-item"><input type="checkbox" checked onchange="toggleCol('adm',this)"> Admin</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('lic',this)"> Licenses</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('ct',this)"> Contract</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('cant',this)"> Cancellation</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('tu',this)"> Users</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('notes',this)"> Notes</label>
+          <label class="col-item"><input type="checkbox" onchange="toggleCol('bt',this)"> Billing Terms</label>
+        </div>
+      </div>
+      <div class="at-toggle">
+        <button id="tog-annual" class="active" onclick="setToggle('annual')">Annual</button>
+        <button id="tog-monthly" onclick="setToggle('monthly')">Monthly</button>
+      </div>
     </div>
-    <div class="tg" id="tgrid"></div>
+    <div class="at-tbl-wrap">
+      <table class="at-tbl">
+        <thead>
+          <tr>
+            <th onclick="sortTbl('name')">Tool <span class="sort-arrow" id="sa-name">↕</span></th>
+            <th data-col="dept" onclick="sortTbl('dept')">Department <span class="sort-arrow" id="sa-dept">↕</span></th>
+            <th data-col="st" onclick="sortTbl('st')">Status <span class="sort-arrow" id="sa-st">↕</span></th>
+            <th data-col="bc">Business Case</th>
+            <th data-col="cost" onclick="sortTbl('ta')" style="text-align:right;">Cost <span class="sort-arrow" id="sa-ta">↕</span></th>
+            <th data-col="rd" onclick="sortTbl('rd')">Renewal <span class="sort-arrow" id="sa-rd">↕</span></th>
+            <th data-col="adm">Admin</th>
+            <th data-col="lic" style="display:none;">Licenses</th>
+            <th data-col="ct" style="display:none;">Contract</th>
+            <th data-col="cant" style="display:none;">Cancellation</th>
+            <th data-col="tu" style="display:none;">Users</th>
+            <th data-col="notes" style="display:none;">Notes</th>
+            <th data-col="bt" style="display:none;">Billing</th>
+            <th style="text-align:center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tgrid"></tbody>
+      </table>
+    </div>
+    <div class="filter-totals" id="filterTotals"></div>
   </div>
-
-  <!-- DEPARTMENTS -->
   <div id="sec-departments" class="sec">
     <div class="dg" id="dgrid"></div>
     <div id="ddet" style="display:none;margin-top:20px;"></div>
@@ -642,19 +738,25 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
 
   <!-- 2026 YTD -->
   <div id="sec-s2026" class="sec">
-    <div class="kpi-row" style="margin-bottom:18px;" id="ytd-kpis"></div>
-    <div class="g2" style="margin-bottom:18px;">
-      <div class="card">
-        <div class="ct">Cancelled in 2026</div>
-        <div class="cs" id="ytd-cancelled-sub">—</div>
+    <div class="kpi-row" style="margin-bottom:18px;">
+      <div class="kc cg"><div class="kl">Tools Cancelled YTD</div><div class="kv">2</div><div class="ks">2026 year to date</div></div>
+      <div class="kc cgg"><div class="kl">2026 Savings So Far</div><div class="kv gg">$41,837</div><div class="ks">YTD</div></div>
+      <div class="kc cb"><div class="kl">Combined 2025+2026</div><div class="kv" style="font-size:28px;">$193,580</div><div class="ks">Total eliminated</div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ct">Cancelled in 2026</div><div class="cs">2 tools removed · Q1 in progress</div>
         <table class="st"><thead><tr><th>Tool</th><th>Cancelled</th><th style="text-align:right;">Savings</th></tr></thead>
-        <tbody id="ytd-cancelled-body"></tbody></table>
+        <tbody>
+          <tr><td>Epicor / Grow</td><td style="color:var(--tm)">Jan 2026</td><td class="sn">$24,177</td></tr>
+          <tr><td>WealthEngine</td><td style="color:var(--tm)">Mar 2026</td><td class="sn">$17,660</td></tr>
+          <tr class="stot"><td colspan="2">Total 2026 savings</td><td class="sn" style="color:var(--green);">$41,837</td></tr>
+        </tbody></table>
       </div>
       <div class="card"><div class="ct">Two-Year Summary</div><div class="cs">Combined since Jan 2025</div>
         <div style="margin-top:6px;">
           <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2025 cancelled (8 tools)</span><span style="color:var(--green);font-weight:600;">$151,743</span></div>
-          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;" id="ytd-2026-row"><span>2026 cancelled</span><span style="color:var(--green);font-weight:600;">—</span></div>
-          <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:16px;font-weight:700;" id="ytd-total-row"><span>Total eliminated</span><span style="color:var(--green);">—</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2026 cancelled (2 tools)</span><span style="color:var(--green);font-weight:600;">$41,837</span></div>
+          <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:16px;font-weight:700;"><span>Total eliminated</span><span style="color:var(--green);">$193,580</span></div>
           <div style="border-top:2px solid var(--border);padding-top:13px;">
             <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">If all under-review tools are cancelled:</div>
             <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tm);margin-bottom:3px;" id="proj-active">—</div>
@@ -664,11 +766,13 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="ct">New Tools Added in 2026</div>
-      <div class="cs" id="ytd-added-sub">—</div>
+    <div class="card"><div class="ct">New Tools Added in 2026</div><div class="cs">3 tools · $40,448 total acquisition cost</div>
       <table class="st"><thead><tr><th>Tool</th><th>Start Date</th><th>Department</th><th style="text-align:right;">Annual Cost</th></tr></thead>
-      <tbody id="ytd-added-body"></tbody></table>
+      <tbody>
+        <tr><td>Artlist</td><td style="color:var(--tm)">Jan 21, 2026</td><td style="color:var(--tm)">Creative</td><td style="text-align:right;font-weight:600;color:var(--gold);">$10,000</td></tr>
+        <tr><td>Slack Pro</td><td style="color:var(--tm)">Jan 23, 2026</td><td style="color:var(--tm)">Operations</td><td style="text-align:right;font-weight:600;color:var(--gold);">$4,581</td></tr>
+        <tr><td>Rippling</td><td style="color:var(--tm)">Mar 1, 2026</td><td style="color:var(--tm)">HR / Operations</td><td style="text-align:right;font-weight:600;color:var(--gold);">$25,860</td></tr>
+      </tbody></table>
     </div>
   </div>
 
@@ -830,11 +934,11 @@ let T=[
 {"name":"LucidChart","def":"Diagramming and visual collaboration tool for flowcharts and org charts.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"","ms":11.73,"as":0,"ta":140.76,"ie":"Internal","dept":"Major Gift","adm":"Erik","lic":"","cp":"","sn":"","int":"","tu":"Erik","ai":"","notes":"Double check with Erik","box":""},
 {"name":"Lumen Internet","def":"Business internet and network connectivity provider.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":570.38,"as":0,"ta":6844.56,"ie":"","dept":"Operations","adm":"Erin/Admin","lic":"1","cp":"","sn":"","int":"","tu":"Admin","ai":"","notes":"","box":""},
 {"name":"Mailchimp","def":"Email marketing platform for designing, sending, and tracking email campaigns.","sd":"","rd":"","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"30 days","ms":255.84,"as":0,"ta":3070.08,"ie":"External","dept":"Marketing","adm":"","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"Move to annual plan","notes":"Marketing should know","box":""},
-{"name":"Microsoft | Clarity","def":"Free Microsoft web analytics tool with heatmaps and session recordings.","sd":"Free","rd":"","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Digital","adm":"Digital Login","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free for Digital","box":""},
-{"name":"Microsoft | Defender","def":"Microsoft endpoint security and antivirus protection platform.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":346.45,"as":0,"ta":4157.4,"ie":"","dept":"Operations","adm":"OPS, Gloo 360","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"Gloo IT","box":""},
-{"name":"Microsoft | Entra ID P1","def":"Identity and access management for securing user logins and SSO.","sd":"","rd":"2027-01-22","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":434.92,"as":0,"ta":5219.04,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"43","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
-{"name":"Microsoft | Exchange Online","def":"Microsoft's cloud-based email and calendar service.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":174.68,"as":0,"ta":2096.16,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
-{"name":"Microsoft | 365 Business Premium","def":"Enterprise Microsoft 365 license including Word, Excel, Teams, and more.","sd":"","rd":"2026-08-25","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"60 days","ms":1881.39,"as":0,"ta":22576.68,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"81","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":""},
+{"name":"Microsoft | Clarity","def":"Free Microsoft web analytics tool with heatmaps and session recordings.","sd":"Free","rd":"","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"Internal","dept":"Digital","adm":"Digital Login","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free for Digital","box":"","bc":""},
+{"name":"Microsoft | Defender","def":"Microsoft endpoint security and antivirus protection platform.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":346.45,"as":0,"ta":4157.4,"ie":"","dept":"Operations","adm":"OPS, Gloo 360","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"Gloo IT","box":"","bc":""},
+{"name":"Microsoft | Entra ID P1","def":"Identity and access management for securing user logins and SSO.","sd":"","rd":"2027-01-22","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":434.92,"as":0,"ta":5219.04,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"43","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":"","bc":""},
+{"name":"Microsoft | Exchange Online","def":"Microsoft's cloud-based email and calendar service.","sd":"","rd":"2026-07-16","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":174.68,"as":0,"ta":2096.16,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"65","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":"","bc":""},
+{"name":"Microsoft | 365 Business Premium","def":"Enterprise Microsoft 365 license including Word, Excel, Teams, and more.","sd":"","rd":"2026-08-25","cd":"","st":"active","ct":"Monthly","bt":"Monthly","cant":"60 days","ms":1881.39,"as":0,"ta":22576.68,"ie":"Internal","dept":"Operations","adm":"Gloo IT, Patricia","lic":"81","cp":"","sn":"","int":"","tu":"All Dunham Users","ai":"","notes":"","box":"","bc":""},
 {"name":"Musicbed","def":"Licensed music platform for syncing high-quality tracks to video and commercial content.","sd":"","rd":"2027-05-15","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"30 days","ms":109.99,"as":0,"ta":1319.88,"ie":"External","dept":"Creative","adm":"Admin","lic":"2","cp":"","sn":"","int":"","tu":"Michael; Dan","ai":"","notes":"","box":""},
 {"name":"Nielsen Audio","def":"Radio audience measurement and ratings service.","sd":"","rd":"2028-03-01","cd":"","st":"active","ct":"Annually","bt":"Monthly","cant":"60 days","ms":2558.14,"as":0,"ta":30697.68,"ie":"Internal/external","dept":"Media","adm":"Travis","lic":"","cp":"","sn":"","int":"","tu":"Travis, Jim, Catherine","ai":"Is this client specific?","notes":"Contract is from 04/2025–03/2028","box":""},
 {"name":"Octopus.do","def":"Website wireframing and sitemap planning tool.","sd":"","rd":"No charge","cd":"","st":"active","ct":"","bt":"","cant":"","ms":0,"as":0,"ta":0,"ie":"","dept":"Digital","adm":"Madison","lic":"","cp":"","sn":"","int":"","tu":"Madison","ai":"","notes":"Free — confirmed no charges with accounting","box":""},
@@ -1036,8 +1140,45 @@ function bldRen(){
 function tbkt(h){const b=h.nextElementSibling,a=h.querySelector('.bt');b.classList.toggle('open');a.classList.toggle('open');}
 
 // ============================================================
-// ALL TOOLS / FILTER
+// ALL TOOLS — SPREADSHEET VIEW
 // ============================================================
+let _costToggle = 'annual'; // 'annual' or 'monthly'
+let _sortCol = 'name';
+let _sortDir = 1;
+
+function setToggle(mode){
+  _costToggle = mode;
+  document.getElementById('tog-annual').classList.toggle('active', mode==='annual');
+  document.getElementById('tog-monthly').classList.toggle('active', mode==='monthly');
+  filt();
+}
+
+// Column visibility
+const _hiddenCols = new Set();
+function toggleColMenu(e){
+  e.stopPropagation();
+  document.getElementById('colMenu').classList.toggle('open');
+}
+document.addEventListener('click', ()=>{ const m=document.getElementById('colMenu'); if(m)m.classList.remove('open'); });
+
+function toggleCol(col, cb){
+  if(cb.checked){ _hiddenCols.delete(col); } else { _hiddenCols.add(col); }
+  // Update all th and td with data-col
+  document.querySelectorAll(`[data-col="${col}"]`).forEach(el=>{
+    el.style.display = cb.checked ? '' : 'none';
+  });
+}
+
+function sortTbl(col){
+  if(_sortCol===col) _sortDir*=-1; else { _sortCol=col; _sortDir=1; }
+  // Update arrows
+  ['name','dept','st','ta','rd'].forEach(c=>{
+    const el=document.getElementById('sa-'+c);
+    if(el) el.textContent = _sortCol===c ? (_sortDir===1?'↑':'↓') : '↕';
+  });
+  filt();
+}
+
 function bldDF(){
   const dp=[...new Set(T.map(t=>t.dept).filter(Boolean))].sort();
   const sel=document.getElementById('tdept');
@@ -1050,14 +1191,108 @@ function filt(){
   const q=(document.getElementById('tsrch')?.value||'').toLowerCase();
   const st=document.getElementById('tstat')?.value||'';
   const dp=document.getElementById('tdept')?.value||'';
-  const f=T.filter(t=>{
+  const amt=document.getElementById('tamt')?.value||'';
+
+  let f=T.filter(t=>{
     if(!t.name)return false;
-    const mq=!q||[t.name,t.dept,t.adm,t.def,t.tu,t.notes,t.ai].some(v=>v&&v.toLowerCase().includes(q));
-    return mq&&(!st||t.st===st)&&(!dp||t.dept===dp);
+    const mq=!q||[t.name,t.dept,t.adm,t.def,t.tu,t.notes,t.ai,t.bc].some(v=>v&&v.toLowerCase().includes(q));
+    if(!mq)return false;
+    if(st&&t.st!==st)return false;
+    if(dp&&t.dept!==dp)return false;
+    if(amt){
+      const ta=+t.ta||0;
+      if(amt==='0-1000'&&ta>=1000)return false;
+      if(amt==='1000-10000'&&(ta<1000||ta>=10000))return false;
+      if(amt==='10000-50000'&&(ta<10000||ta>=50000))return false;
+      if(amt==='50000+'&&ta<50000)return false;
+    }
+    return true;
   });
-  rndCards(f,'tgrid');
+
+  // Sort
+  f.sort((a,b)=>{
+    let av=a[_sortCol]||'', bv=b[_sortCol]||'';
+    if(_sortCol==='ta'){av=+a.ta||0;bv=+b.ta||0;return(av-bv)*_sortDir;}
+    if(_sortCol==='rd'){av=a.rd||'9999';bv=b.rd||'9999';}
+    return av.toString().localeCompare(bv.toString())*_sortDir;
+  });
+
+  rndTbl(f);
+  rndTotals(f);
 }
 
+function rndTbl(tools){
+  const el=document.getElementById('tgrid');if(!el)return;
+  if(!tools.length){el.innerHTML='<tr><td colspan="8" class="empty" style="padding:24px;text-align:center;">No tools found.</td></tr>';return;}
+  const today=new Date();
+  el.innerHTML=tools.map(t=>{
+    const idx=T.indexOf(t);
+    const sc=t.st==='active'?'pa':t.st==='under review'?'pr':'pc';
+    const isRev=t.st==='under review';
+
+    // Cost display
+    const cost=_costToggle==='monthly'?(+t.ta/12):+t.ta;
+    const costFmt=fmt(Math.round(cost))+(_costToggle==='monthly'?'/mo':'/yr');
+
+    // Renewal
+    let renTxt='—', renCls='at-ren';
+    if(t.rd&&t.rd.match(/^\d{4}/)){
+      const rd=new Date(t.rd);
+      const days=Math.round((rd-today)/86400000);
+      if(days<0){renTxt=Math.abs(days)+'d overdue';renCls='at-ren overdue';}
+      else if(days<=30){renTxt=t.rd.split('T')[0]+' ('+days+'d)';renCls='at-ren soon';}
+      else{renTxt=t.rd.split('T')[0];}
+    }
+
+    // Business case — show def if no bc
+    const bc=t.bc||(t.def?t.def.substring(0,120)+(t.def.length>120?'…':''):'—');
+
+    return`<tr onclick="om(${idx})">
+      <td><div class="at-nm">${t.name}</div></td>
+      <td data-col="dept"><div class="at-dept">${t.dept||'—'}</div></td>
+      <td data-col="st"><span class="pill ${sc}">${t.st}</span></td>
+      <td data-col="bc"><div class="at-bc">${bc}</div></td>
+      <td data-col="cost" style="text-align:right;"><div class="at-cost">${costFmt}</div></td>
+      <td data-col="rd"><div class="${renCls}">${renTxt}</div></td>
+      <td data-col="adm"><div class="at-adm">${t.adm||'—'}</div></td>
+      <td data-col="lic" style="display:none;"><div class="at-adm">${t.lic||'—'}</div></td>
+      <td data-col="ct" style="display:none;"><div class="at-adm">${t.ct||'—'}</div></td>
+      <td data-col="cant" style="display:none;"><div class="at-adm">${t.cant||'—'}</div></td>
+      <td data-col="tu" style="display:none;"><div class="at-bc">${t.tu||'—'}</div></td>
+      <td data-col="notes" style="display:none;"><div class="at-bc">${t.notes||'—'}</div></td>
+      <td data-col="bt" style="display:none;"><div class="at-adm">${t.bt||'—'}</div></td>
+      <td onclick="event.stopPropagation()">
+        <div class="at-acts">
+          ${t.box?`<a class="box-link-btn" href="${t.box}" target="_blank">📦</a>`:''}
+          ${isRev?`<button class="btn-cancel-tool" onclick="quickCancel(${idx})">✕</button>`:''}
+          <button class="btn-edit" onclick="om(${idx},true)">Edit</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function rndTotals(tools){
+  const el=document.getElementById('filterTotals');
+  if(!el)return;
+  const total=tools.length;
+  const active=tools.filter(t=>t.st==='active').length;
+  const review=tools.filter(t=>t.st==='under review').length;
+  const cancelled=tools.filter(t=>t.st==='cancelled').length;
+  const annualSum=tools.filter(t=>t.st==='active'||t.st==='under review').reduce((s,t)=>s+(+t.ta||0),0);
+  const monthlySum=annualSum/12;
+  const display=_costToggle==='monthly'?fmt(Math.round(monthlySum))+'/mo':fmt(Math.round(annualSum))+'/yr';
+  el.innerHTML=`
+    <div class="ft-item"><span class="ft-label">Showing</span><span class="ft-val">${total} tools</span></div>
+    <div class="ft-divider"></div>
+    <div class="ft-item"><span class="ft-label">Active</span><span class="ft-val green">${active}</span></div>
+    <div class="ft-item"><span class="ft-label">Under Review</span><span class="ft-val" style="color:var(--amber)">${review}</span></div>
+    <div class="ft-item"><span class="ft-label">Cancelled</span><span class="ft-val" style="color:var(--red)">${cancelled}</span></div>
+    <div class="ft-divider"></div>
+    <div class="ft-item"><span class="ft-label">Total Cost</span><span class="ft-val gold">${display}</span></div>
+    ${_costToggle==='annual'?`<div class="ft-item"><span class="ft-label">Monthly equivalent</span><span class="ft-val" style="color:var(--tm)">${fmt(Math.round(monthlySum))}/mo</span></div>`:''}
+  `;
+}
 function rndCards(tools,cid){
   const el=document.getElementById(cid);if(!el)return;
   if(!tools.length){el.innerHTML='<div class="empty">No tools found.</div>';return;}
@@ -1239,6 +1474,7 @@ function renderModal(){
         </select>
       </div>
       <div class="ef-group ef-full"><label>Definition / Description</label><textarea id="e-def" rows="2">${esc(t.def)}</textarea></div>
+      <div class="ef-group ef-full"><label>💼 Business Case <span style="font-weight:400;color:var(--tl);text-transform:none;letter-spacing:0;">Why we pay for this · benefit · disruption if removed</span></label><textarea id="e-bc" rows="2">${esc(t.bc||'')}</textarea></div>
       <div class="ef-group"><label>Department</label>
         <select id="e-dept">
           ${['Accounting','All Departments','Creative','Data','Digital','Donor Advancement','HR','Major Gift','Marketing','Media','Multi','Operations','Ops','Other','Unassigned'].map(d=>`<option ${t.dept===d?'selected':''}>${d}</option>`).join('')}
@@ -1302,6 +1538,7 @@ function saveEdit(){
   t.name=document.getElementById('e-name').value.trim()||t.name;
   t.st=document.getElementById('e-st').value;
   t.def=document.getElementById('e-def').value.trim();
+  t.bc=document.getElementById('e-bc').value.trim();
   t.dept=document.getElementById('e-dept').value;
   t.adm=document.getElementById('e-adm').value.trim();
   t.ms=parseFloat(document.getElementById('e-ms').value)||0;
@@ -1400,66 +1637,8 @@ function nav(id,el){
 }
 
 // ============================================================
-// 2026 YTD — fully dynamic
+// FULL REFRESH (called after any data change)
 // ============================================================
-function bld2026(){
-  const SAVINGS_2025 = 151743;
-
-  // Cancelled in 2026 — tools with st=cancelled and cd starting with 2026
-  const cancelled2026 = T.filter(t => t.st === 'cancelled' && t.cd && t.cd.startsWith('2026'));
-  const savings2026 = cancelled2026.reduce((s,t) => s + (+t.ta||0), 0);
-  const combined = SAVINGS_2025 + savings2026;
-
-  // New tools added in 2026 — active tools with sd starting with 2026
-  const added2026 = T.filter(t => t.st === 'active' && t.sd && t.sd.startsWith('2026'));
-  const addedCost = added2026.reduce((s,t) => s + (+t.ta||0), 0);
-
-  // Under review potential savings
-  const reviewSavings = underReview().reduce((s,t) => s + (+t.ta||0), 0);
-  const activeCost = actv().reduce((s,t) => s + (+t.ta||0), 0);
-
-  // KPIs
-  const kpis = document.getElementById('ytd-kpis');
-  if(kpis) kpis.innerHTML = `
-    <div class="kc cg"><div class="kl">Tools Cancelled YTD</div><div class="kv">${cancelled2026.length}</div><div class="ks">2026 year to date</div></div>
-    <div class="kc cgg"><div class="kl">2026 Savings So Far</div><div class="kv gg">${fmt(savings2026)}</div><div class="ks">YTD</div></div>
-    <div class="kc cb"><div class="kl">Combined 2025+2026</div><div class="kv" style="font-size:28px;">${fmt(combined)}</div><div class="ks">Total eliminated</div></div>`;
-
-  // Cancelled table
-  const sub = document.getElementById('ytd-cancelled-sub');
-  if(sub) sub.textContent = `${cancelled2026.length} tool${cancelled2026.length!==1?'s':''} removed · ${fmt(savings2026)} saved`;
-  const tbody = document.getElementById('ytd-cancelled-body');
-  if(tbody) tbody.innerHTML = cancelled2026.length ? cancelled2026.map(t => {
-    const cdFmt = t.cd ? new Date(t.cd).toLocaleDateString('en-US',{month:'short',year:'numeric'}) : '—';
-    return `<tr><td>${t.name}</td><td style="color:var(--tm)">${cdFmt}</td><td class="sn">${fmt(t.ta)}</td></tr>`;
-  }).join('') + `<tr class="stot"><td colspan="2">Total 2026 savings</td><td class="sn" style="color:var(--green);">${fmt(savings2026)}</td></tr>`
-  : `<tr><td colspan="3" class="empty">No tools cancelled in 2026 yet</td></tr>`;
-
-  // Two-year summary rows
-  const row2026 = document.getElementById('ytd-2026-row');
-  if(row2026) row2026.innerHTML = `<span>2026 cancelled (${cancelled2026.length} tool${cancelled2026.length!==1?'s':''})</span><span style="color:var(--green);font-weight:600;">${fmt(savings2026)}</span>`;
-  const rowTotal = document.getElementById('ytd-total-row');
-  if(rowTotal) rowTotal.innerHTML = `<span>Total eliminated</span><span style="color:var(--green);">${fmt(combined)}</span>`;
-
-  // Projections
-  const pa = document.getElementById('proj-active');
-  const pr = document.getElementById('proj-review');
-  const pt = document.getElementById('proj-total');
-  if(pa) pa.innerHTML = `<span>Current active spend</span><span>${fmt(activeCost)}/yr</span>`;
-  if(pr) pr.innerHTML = `<span>Under review (potential cut)</span><span>−${fmt(reviewSavings)}/yr</span>`;
-  if(pt) pt.innerHTML = `<span>Potential new annual spend</span><span style="color:var(--green);">${fmt(activeCost - reviewSavings)}/yr</span>`;
-
-  // New tools added table
-  const addSub = document.getElementById('ytd-added-sub');
-  if(addSub) addSub.textContent = `${added2026.length} tool${added2026.length!==1?'s':''} · ${fmt(addedCost)} total acquisition cost`;
-  const addBody = document.getElementById('ytd-added-body');
-  if(addBody) addBody.innerHTML = added2026.length ? added2026.map(t => {
-    const sdFmt = t.sd ? new Date(t.sd).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
-    return `<tr><td>${t.name}</td><td style="color:var(--tm)">${sdFmt}</td><td style="color:var(--tm)">${t.dept||'—'}</td><td style="text-align:right;font-weight:600;color:var(--gold);">${fmt(t.ta)}</td></tr>`;
-  }).join('')
-  : `<tr><td colspan="4" class="empty">No new tools added in 2026 yet</td></tr>`;
-}
-
 function refreshAll(){
   renderSummary();
   bld15('t15s');bld15('t15p');
@@ -1467,7 +1646,6 @@ function refreshAll(){
   bldRenMini();bldRen();
   bldDF();filt();
   bldDepts();bldRevTbl();
-  bld2026();
 }
 
 // ============================================================
@@ -1492,15 +1670,11 @@ async function saveData(){
       const now = new Date();
       const timeStr = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
       setSavedStatus('✓ Saved ' + timeStr, 'var(--green)');
-      console.log('KV saved:', T.length, 'tools at', timeStr);
     } else {
-      const errText = await res.text().catch(()=>'');
-      console.error('KV save failed HTTP', res.status, errText);
       setSavedStatus('Save failed', 'var(--red)');
       showToast('Could not save — please try again', 'red');
     }
   } catch(e){
-    console.error('saveData error:', e);
     setSavedStatus('Offline?', 'var(--red)');
     showToast('Save error — check connection', 'red');
   }
@@ -1510,26 +1684,17 @@ async function loadData(){
   try{
     setSavedStatus('Loading…', 'var(--gold)');
     const res = await fetch('/api/data?key=' + STORAGE_KEY);
-    if(!res.ok){
-      console.warn('KV load failed, HTTP', res.status);
-      setSavedStatus('Load failed', 'var(--red)');
-      return false;
+    if(res.ok){
+      const json = await res.json();
+      if(json.value && Array.isArray(json.value) && json.value.length > 0){
+        T = json.value;
+        setSavedStatus('✓ Up to date', 'var(--green)');
+        return true;
+      }
     }
-    const json = await res.json();
-    if(json.value && Array.isArray(json.value) && json.value.length > 0){
-      T = json.value;
-      setSavedStatus('✓ Up to date', 'var(--green)');
-      console.log('KV loaded:', T.length, 'tools');
-      return true;
-    }
-    // KV returned null/empty — use hardcoded defaults, then save them to KV
-    console.log('KV empty — using defaults, pushing to KV');
-    setSavedStatus('Initialising…', 'var(--gold)');
-    await saveData();
-    return false;
+    setSavedStatus('', '');
   } catch(e){
-    console.error('loadData error:', e);
-    setSavedStatus('Offline?', 'var(--red)');
+    setSavedStatus('', '');
   }
   return false;
 }
@@ -1552,15 +1717,12 @@ function syncDateText(pickId, textId){
 }
 
 // ============================================================
-// INIT — called after password unlock, loads KV then renders
+// INIT — load shared data first, then render
 // ============================================================
-window._appReady = false;
-async function initApp(){
-  if(window._appReady) return;
-  window._appReady = true;
+(async function init(){
   await loadData();
   refreshAll();
-}
+})();
 </script>
 
 </div><!-- /app-shell -->
@@ -1583,7 +1745,6 @@ async function initApp(){
       gate.style.display='none';
       app.style.display='flex';
       app.style.width='100%';
-      initApp();
     },380);
   }
 
@@ -1593,7 +1754,6 @@ async function initApp(){
     const app=document.getElementById('app-shell');
     app.style.display='flex';
     app.style.width='100%';
-    initApp();
     return;
   }
 
