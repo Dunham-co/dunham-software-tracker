@@ -736,44 +736,14 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
     </tbody></table></div>
   </div>
 
-  <!-- 2026 YTD -->
+  <!-- 2026 YTD — fully dynamic, rendered from KV data -->
   <div id="sec-s2026" class="sec">
-    <div class="kpi-row" style="margin-bottom:18px;">
-      <div class="kc cg"><div class="kl">Tools Cancelled YTD</div><div class="kv">2</div><div class="ks">2026 year to date</div></div>
-      <div class="kc cgg"><div class="kl">2026 Savings So Far</div><div class="kv gg">$41,837</div><div class="ks">YTD</div></div>
-      <div class="kc cb"><div class="kl">Combined 2025+2026</div><div class="kv" style="font-size:28px;">$193,580</div><div class="ks">Total eliminated</div></div>
+    <div class="kpi-row" style="margin-bottom:18px;" id="s2026-kpis"></div>
+    <div class="g2" style="margin-bottom:18px;">
+      <div id="s2026-cancelled"></div>
+      <div id="s2026-summary"></div>
     </div>
-    <div class="g2">
-      <div class="card"><div class="ct">Cancelled in 2026</div><div class="cs">2 tools removed · Q1 in progress</div>
-        <table class="st"><thead><tr><th>Tool</th><th>Cancelled</th><th style="text-align:right;">Savings</th></tr></thead>
-        <tbody>
-          <tr><td>Epicor / Grow</td><td style="color:var(--tm)">Jan 2026</td><td class="sn">$24,177</td></tr>
-          <tr><td>WealthEngine</td><td style="color:var(--tm)">Mar 2026</td><td class="sn">$17,660</td></tr>
-          <tr class="stot"><td colspan="2">Total 2026 savings</td><td class="sn" style="color:var(--green);">$41,837</td></tr>
-        </tbody></table>
-      </div>
-      <div class="card"><div class="ct">Two-Year Summary</div><div class="cs">Combined since Jan 2025</div>
-        <div style="margin-top:6px;">
-          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2025 cancelled (8 tools)</span><span style="color:var(--green);font-weight:600;">$151,743</span></div>
-          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2026 cancelled (2 tools)</span><span style="color:var(--green);font-weight:600;">$41,837</span></div>
-          <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:16px;font-weight:700;"><span>Total eliminated</span><span style="color:var(--green);">$193,580</span></div>
-          <div style="border-top:2px solid var(--border);padding-top:13px;">
-            <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">If all under-review tools are cancelled:</div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tm);margin-bottom:3px;" id="proj-active">—</div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--red);margin-bottom:7px;" id="proj-review">—</div>
-            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;" id="proj-total">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card"><div class="ct">New Tools Added in 2026</div><div class="cs">3 tools · $40,448 total acquisition cost</div>
-      <table class="st"><thead><tr><th>Tool</th><th>Start Date</th><th>Department</th><th style="text-align:right;">Annual Cost</th></tr></thead>
-      <tbody>
-        <tr><td>Artlist</td><td style="color:var(--tm)">Jan 21, 2026</td><td style="color:var(--tm)">Creative</td><td style="text-align:right;font-weight:600;color:var(--gold);">$10,000</td></tr>
-        <tr><td>Slack Pro</td><td style="color:var(--tm)">Jan 23, 2026</td><td style="color:var(--tm)">Operations</td><td style="text-align:right;font-weight:600;color:var(--gold);">$4,581</td></tr>
-        <tr><td>Rippling</td><td style="color:var(--tm)">Mar 1, 2026</td><td style="color:var(--tm)">HR / Operations</td><td style="text-align:right;font-weight:600;color:var(--gold);">$25,860</td></tr>
-      </tbody></table>
-    </div>
+    <div id="s2026-new"></div>
   </div>
 
   </div><!-- /content -->
@@ -1014,7 +984,10 @@ function renderSummary(){
   document.getElementById('cs-invest-sub').textContent=`${s.active} active tools · as of ${fmtDate(TODAY)}`;
   document.getElementById('cs-incor').textContent=incorFmt;
   document.getElementById('cs-incor-sub').textContent=`Amortize ÷ 12 · ${s.review} tools under review`;
-  document.getElementById('cs-trend').textContent=`↓ $193,580 eliminated since Jan 2025`;
+  const savings2025=151743;
+  const cancelled2026total=T.filter(t=>t.st==='cancelled'&&t.cd&&t.cd.startsWith('2026')).reduce((s,t)=>s+(+t.ta||0),0);
+  const combinedSavings=savings2025+cancelled2026total;
+  document.getElementById('cs-trend').textContent=`↓ ${fmt(Math.round(combinedSavings))} eliminated since Jan 2025`;
 
   // KPI row
   document.getElementById('summary-kpis').innerHTML=`
@@ -1022,18 +995,12 @@ function renderSummary(){
     <div class="kc cgg"><div class="kl">INCOR — Monthly P&amp;L</div><div class="kv gg" style="font-size:34px;">${incorFmt}</div><div class="ks">Annual ÷ 12 · true monthly cost</div></div>
     <div class="kc cg"><div class="kl">Active Tools</div><div class="kv" style="font-size:44px;">${s.active}</div><div class="ks">Across all departments</div></div>
     <div class="kc ca"><div class="kl">Under Review</div><div class="kv ga" style="font-size:44px;">${s.review}</div><div class="ks">Likely cancellations · ${fmt(Math.round(s.reviewSavings))}/yr</div></div>
-    <div class="kc cgg"><div class="kl">Savings Locked In</div><div class="kv gg" style="font-size:32px;">$157K</div><div class="ks">30 cancelled tools · annualized</div></div>`;
+    <div class="kc cgg"><div class="kl">Savings Locked In</div><div class="kv gg" style="font-size:32px;">${fmt(Math.round(combinedSavings))}</div><div class="ks">${T.filter(t=>t.st==='cancelled').length} cancelled tools · annualized</div></div>`;
 
   document.getElementById('total-tools-sub').textContent=`${s.total} total tools in inventory`;
   document.getElementById('tb-meta').textContent=`${s.active} active · ${s.review} under review · ${cancelled().length} cancelled`;
 
-  // 2026 projection
-  const ai=document.getElementById('proj-active');
-  const ar=document.getElementById('proj-review');
-  const at=document.getElementById('proj-total');
-  if(ai){ai.innerHTML=`<span>Current active spend</span><span>${fmt(Math.round(s.totalAnnual))}</span>`;}
-  if(ar){ar.innerHTML=`<span>Under-review savings</span><span>− ${fmt(Math.round(s.reviewSavings))}</span>`;}
-  if(at){at.innerHTML=`<span>Projected annual cost</span><span style="color:var(--green);">${fmt(Math.round(s.totalAnnual-s.reviewSavings))}</span>`;}
+  // 2026 projection — now rendered by bld2026()
 
   // Review KPIs
   const rkEl=document.getElementById('review-kpis');
@@ -1637,6 +1604,93 @@ function nav(id,el){
 }
 
 // ============================================================
+// 2026 YTD — dynamic render from KV data
+// ============================================================
+function bld2026(){
+  const SAVINGS_2025 = 151743;
+  const cancelled26 = T.filter(t=>t.st==='cancelled' && t.cd && t.cd.startsWith('2026'))
+                       .sort((a,b)=>(+b.ta||0)-(+a.ta||0));
+  const savings26 = cancelled26.reduce((s,t)=>s+(+t.ta||0),0);
+  const combined  = SAVINGS_2025 + savings26;
+
+  const new26     = T.filter(t=>t.sd && t.sd.startsWith('2026') && t.st==='active')
+                     .sort((a,b)=>a.sd.localeCompare(b.sd));
+  const newCost26 = new26.reduce((s,t)=>s+(+t.ta||0),0);
+
+  const s = computeStats();
+
+  // KPI row
+  const kpiEl=document.getElementById('s2026-kpis');
+  if(kpiEl) kpiEl.innerHTML=`
+    <div class="kc cg"><div class="kl">Tools Cancelled YTD</div><div class="kv">${cancelled26.length}</div><div class="ks">2026 year to date</div></div>
+    <div class="kc cgg"><div class="kl">2026 Savings So Far</div><div class="kv gg">${fmt(Math.round(savings26))}</div><div class="ks">YTD</div></div>
+    <div class="kc cb"><div class="kl">Combined 2025+2026</div><div class="kv" style="font-size:28px;">${fmt(Math.round(combined))}</div><div class="ks">Total eliminated</div></div>`;
+
+  // Cancelled table
+  const canEl=document.getElementById('s2026-cancelled');
+  if(canEl){
+    if(!cancelled26.length){
+      canEl.innerHTML='<div class="card"><div class="empty">No cancellations with a 2026 cancellation date recorded yet.<br>Mark a tool as <strong>Cancelled</strong> and set its Cancellation Date to a 2026 date — it will appear here automatically.</div></div>';
+    } else {
+      canEl.innerHTML=`<div class="card">
+        <div class="ct">Cancelled in 2026</div>
+        <div class="cs">${cancelled26.length} tool${cancelled26.length!==1?'s':''} removed · ${fmt(Math.round(savings26))} saved</div>
+        <table class="st"><thead><tr><th>Tool</th><th>Department</th><th>Cancelled</th><th style="text-align:right;">Annual Savings</th></tr></thead>
+        <tbody>
+          ${cancelled26.map(t=>`<tr>
+            <td>${t.name}</td>
+            <td style="color:var(--tm)">${t.dept||'—'}</td>
+            <td style="color:var(--tm)">${t.cd?t.cd.split('T')[0]:'—'}</td>
+            <td class="sn">${+t.ta>0?fmt(+t.ta):'<span style="color:var(--tm);font-size:11px;">no cost on record</span>'}</td>
+          </tr>`).join('')}
+          <tr class="stot"><td colspan="3">Total 2026 savings</td><td class="sn" style="color:var(--green);">${fmt(Math.round(savings26))} / year</td></tr>
+        </tbody></table>
+      </div>`;
+    }
+  }
+
+  // Two-year summary
+  const sumEl=document.getElementById('s2026-summary');
+  if(sumEl) sumEl.innerHTML=`<div class="card">
+    <div class="ct">Two-Year Summary</div>
+    <div class="cs">Combined since Jan 2025</div>
+    <div style="margin-top:6px;">
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2025 cancelled (8 tools)</span><span style="color:var(--green);font-weight:600;">$151,743</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>2026 cancelled (${cancelled26.length} tool${cancelled26.length!==1?'s':''})</span><span style="color:var(--green);font-weight:600;">${fmt(Math.round(savings26))}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:16px;font-weight:700;"><span>Total eliminated</span><span style="color:var(--green);">${fmt(Math.round(combined))}</span></div>
+      <div style="border-top:2px solid var(--border);padding-top:13px;">
+        <div style="font-size:11px;color:var(--tm);margin-bottom:6px;">If all under-review tools are cancelled:</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tm);margin-bottom:3px;"><span>Current active spend</span><span>${fmt(Math.round(s.totalAnnual))}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--red);margin-bottom:7px;"><span>Under-review savings</span><span>− ${fmt(Math.round(s.reviewSavings))}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;"><span>Projected annual cost</span><span style="color:var(--green);">${fmt(Math.round(s.totalAnnual-s.reviewSavings))}</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  // New tools added in 2026
+  const newEl=document.getElementById('s2026-new');
+  if(newEl){
+    if(!new26.length){newEl.style.display='none';}
+    else{
+      newEl.style.display='';
+      newEl.innerHTML=`<div class="card">
+        <div class="ct">New Tools Added in 2026</div>
+        <div class="cs">${new26.length} tool${new26.length!==1?'s':''} · ${fmt(Math.round(newCost26))} total acquisition cost</div>
+        <table class="st"><thead><tr><th>Tool</th><th>Start Date</th><th>Department</th><th style="text-align:right;">Annual Cost</th></tr></thead>
+        <tbody>
+          ${new26.map(t=>`<tr>
+            <td>${t.name}</td>
+            <td style="color:var(--tm)">${t.sd?t.sd.split('T')[0]:'—'}</td>
+            <td style="color:var(--tm)">${t.dept||'—'}</td>
+            <td style="text-align:right;font-weight:600;color:var(--gold);">${fmt(+t.ta)}</td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }
+  }
+}
+
+// ============================================================
 // FULL REFRESH (called after any data change)
 // ============================================================
 function refreshAll(){
@@ -1646,6 +1700,7 @@ function refreshAll(){
   bldRenMini();bldRen();
   bldDF();filt();
   bldDepts();bldRevTbl();
+  bld2026();
 }
 
 // ============================================================
