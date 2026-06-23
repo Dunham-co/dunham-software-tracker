@@ -505,6 +505,13 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
 .toast.green{background:var(--green);}
 .toast.red{background:var(--red);}
 
+/* DEPT MULTI-TOGGLE */
+.dept-tog{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 16px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--tm);cursor:pointer;transition:all .15s;}
+.dept-tog:hover{border-color:var(--gold);color:var(--gold);}
+.dept-tog.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+.dept-tog-all{background:var(--cream3);border:1px solid var(--border);border-radius:8px;padding:7px 16px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--tm);cursor:pointer;transition:all .15s;}
+.dept-tog-all:hover{background:var(--cream2);}
+
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--cream2);}
 ::-webkit-scrollbar-thumb{background:#C8B898;border-radius:3px;}
@@ -686,11 +693,11 @@ body{background:var(--bg);color:var(--tb);font-family:'DM Sans',sans-serif;font-
   </div>
   <div id="sec-departments" class="sec">
     <div class="atbar" style="margin-bottom:16px;">
-      <div class="at-toggle">
-        <button id="dtog-active"  class="active"  onclick="setDeptFilter('active')">Active</button>
-        <button id="dtog-review"                  onclick="setDeptFilter('under review')">Under Review</button>
-        <button id="dtog-cancelled"               onclick="setDeptFilter('cancelled')">Cancelled</button>
-        <button id="dtog-all"                     onclick="setDeptFilter('all')">All</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button id="dtog-active"    class="dept-tog active" onclick="toggleDeptStatus('active')">Active</button>
+        <button id="dtog-review"    class="dept-tog"        onclick="toggleDeptStatus('under review')">Under Review</button>
+        <button id="dtog-cancelled" class="dept-tog"        onclick="toggleDeptStatus('cancelled')">Cancelled</button>
+        <button id="dtog-all"       class="dept-tog-all"    onclick="selectAllDept()">All</button>
       </div>
     </div>
     <div class="dg" id="dgrid"></div>
@@ -1311,21 +1318,38 @@ function rndCards(tools,cid){
 // ============================================================
 // DEPARTMENTS
 // ============================================================
-let _deptStatus = 'active';
+let _deptStatuses = new Set(['active']);
 
-function setDeptFilter(st){
-  _deptStatus = st;
-  ['active','review','cancelled','all'].forEach(k=>{
-    const btn=document.getElementById('dtog-'+k);
-    if(btn) btn.classList.toggle('active', (k==='review'?'under review':k)===st);
-  });
+function toggleDeptStatus(st){
+  if(_deptStatuses.has(st)) {
+    if(_deptStatuses.size===1) return; // keep at least one selected
+    _deptStatuses.delete(st);
+  } else {
+    _deptStatuses.add(st);
+  }
+  syncDeptToggles();
   const det=document.getElementById('ddet');if(det)det.style.display='none';
   bldDepts();
 }
 
+function selectAllDept(){
+  _deptStatuses = new Set(['active','under review','cancelled']);
+  syncDeptToggles();
+  const det=document.getElementById('ddet');if(det)det.style.display='none';
+  bldDepts();
+}
+
+function syncDeptToggles(){
+  const map={'active':'active','under review':'review','cancelled':'cancelled'};
+  Object.entries(map).forEach(([st,k])=>{
+    const btn=document.getElementById('dtog-'+k);
+    if(btn) btn.classList.toggle('active',_deptStatuses.has(st));
+  });
+}
+
 function deptPool(){
-  if(_deptStatus==='all') return T;
-  return T.filter(t=>t.st===_deptStatus);
+  if(_deptStatuses.size===3) return T;
+  return T.filter(t=>_deptStatuses.has(t.st));
 }
 
 function bldDepts(){
@@ -1336,7 +1360,7 @@ function bldDepts(){
   const el=document.getElementById('dgrid');if(!el)return;
   if(!s.length){el.innerHTML='<div class="empty">No tools found for this filter.</div>';return;}
   const mx=s[0][1].total;
-  const lbl=_deptStatus==='all'?'tool':_deptStatus==='under review'?'under review tool':_deptStatus+' tool';
+  const lbl=_deptStatuses.size===3?'tool':'tool';
   el.innerHTML=s.map(([dept,data])=>`
     <div class="dc" onclick="showDD('${dept.replace(/'/g,"\\'")}')">
       <div class="dn">${dept}</div><div class="dct">${data.tools.length} ${lbl}${data.tools.length!==1?'s':''}</div>
@@ -1348,7 +1372,8 @@ function bldDepts(){
 
 function showDD(dept){
   const tools=deptPool().filter(t=>t.dept===dept);
-  const statusLabel=_deptStatus==='all'?'All':_deptStatus==='under review'?'Under Review':_deptStatus.charAt(0).toUpperCase()+_deptStatus.slice(1);
+  const labelMap={'active':'Active','under review':'Under Review','cancelled':'Cancelled'};
+  const statusLabel=_deptStatuses.size===3?'All':[..._deptStatuses].map(s=>labelMap[s]||s).join(' + ');
   const det=document.getElementById('ddet');det.style.display='block';
   det.innerHTML=`<div class="card"><div class="ct">${dept} — ${statusLabel} Tools</div><div class="cs">${tools.length} tool${tools.length!==1?'s':''} · ${fmt(tools.reduce((s,t)=>s+(+t.ta||0),0))} total annual spend</div><div class="tg" id="ddinner"></div></div>`;
   rndCards(tools,'ddinner');
